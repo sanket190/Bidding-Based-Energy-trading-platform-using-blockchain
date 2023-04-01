@@ -6,13 +6,13 @@ const Web3 = require('web3');
 const web3 = new Web3('http://localhost:8545');
 
 
-const energyMarketContractAddress = '0x855AA1eF7ec3A0Ca1d298de130EFc6547Fdc4E54'; // Replace with the actual contract address
+const energyMarketContractAddress = '0xE95095a520eD0D2921d64f3e7f8e48AC01679F7C'; // Replace with the actual contract address
 const contractAbi = require('./contractabi.json');
 const energyMarketContract = new web3.eth.Contract(contractAbi, energyMarketContractAddress);
 
 
-const accountAddress = '0xB306F1b5c9D27221EA39b6a6b1897119be8C0Ce2';
-const accountPrivateKey = '0x7c76e5167b0591e6c4da2142fd6964f8051392e52e36c78d8e78b929a868ad16';
+const accountAddress = '0xE0FE876F430db24b755622291CF8A76B30D76276';
+const accountPrivateKey = '0x0597b2c5645b0b507ff742fb05ddda3e3c8ddf6b476da912e0b9b7fd4b9fcb01';
 
 
 
@@ -23,8 +23,15 @@ web3.eth.defaultAccount = accountAddress;
 app.use(bodyParser.json());
 
 // Get the number of offers that have been created
+
+app.get('/',function(req,res){
+  res.sendFile('/home/sanket/Subjects/Btech_project/new_energy_market/login.html')
+});
+
+
 app.get('/offers-list', async (req, res) => {
     try {
+        // res.sendFile('/home/sanket/Subjects/Btech_project/new_energy_market/Marketplace.html');
         const offerCount = await energyMarketContract.methods.getOfferLength().call();
         const current_offers = [];
         // Loop through all the offers and push their details to the array
@@ -39,7 +46,20 @@ app.get('/offers-list', async (req, res) => {
                 offerId:offer.offerId,
                 active: offer.active
             });
+            var tableBody = '';
+              tableBody += '<tr>';
+              tableBody += '<td>' + offer.offerId + '</td>';
+              tableBody += '<td>' + offer.seller + '</td>';
+              tableBody += '<td>' + offer.quantity + '</td>';
+              tableBody += '<td>' + offer.pricePerUnit + '</td>';
+              tableBody += '<td>' + offer.duration + '</td>';
+              tableBody += '<td>' + new Date(offer.timestamp * 1000).toLocaleString() + '</td>';
+              tableBody += '<td>' + offer.active + '</td>';
+              tableBody += '</tr>';
+           
         }
+        // $('#offers-table-body').html(tableBody);
+        document.getElementById('offers-table-body').insertAdjacentHTML('beforeend', tableBody);
         // Return the list of offers as a JSON response
         res.json(current_offers);
     } catch (error) {
