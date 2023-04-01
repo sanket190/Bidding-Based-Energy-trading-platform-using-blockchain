@@ -1,0 +1,56 @@
+/* Styles for the form group */
+.form-g {
+    margin-bottom: 1rem;
+  }
+  
+  /* Styles for the label */
+  label {
+    font-size: 1rem;
+    font-weight: 500;
+  }
+  
+  /* Styles for the input field */
+  .form-c {
+    border-radius: 0.25rem;
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    border: 1px solid #ced4da;
+  }
+  
+  /* Styles for the submit button */
+  .btn-primary {
+    border-radius: 0.25rem;
+    font-size: 1rem;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    background-color: #007bff;
+    border-color: #007bff;
+  }
+  
+  /* Styles for the loading spinner */
+  .spinner-border {
+    display: inline-block;
+    width: 2rem;
+    height: 2rem;
+    vertical-align: text-bottom;
+    border: 0.25em solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    -webkit-animation: spinner-border 0.75s linear infinite;
+    animation: spinner-border 0.75s linear infinite;
+  }
+  
+  /* Keyframe animation for the spinner */
+  @-webkit-keyframes spinner-border {
+    to { -webkit-transform: rotate(360deg); transform: rotate(360deg); }
+  }
+  
+  @keyframes spinner-border {
+    to { -webkit-transform: rotate(360deg); transform: rotate(360deg); }
+  }
+  
+  /* Styles to hide the spinner */
+  .d-none {
+    display: none !important;
+  }
+  

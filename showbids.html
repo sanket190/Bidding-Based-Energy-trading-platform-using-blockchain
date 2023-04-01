@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Energy Market</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-aFq/bzH65dt+w6FI2ooMVUpc+21e0SRygnTpmBvdBgSdnuTN7QbdgL+OapgHtvPp" crossorigin="anonymous">
+
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
+        <div class="container-fluid">
+          
+          <a class="navbar-brand" href="#">
+            <img src="/images/blockchain_log.png" alt="logo" width="50" height="34">
+          </a>    
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="#">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active" href="#">Pricing</a>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="#">Wallet</a></li>
+                  <li><a class="dropdown-item" href="#">Earn</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item" href="#">About</a></li>
+                </ul>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active ">Contact us</a>
+              </li>
+            </ul>
+            <form class="d-flex" role="search">
+              <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+              <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
+          </div>
+        </div>
+      </nav>
+      <div class="col-md-6 offset-md-3">
+        <h2 class="text-center mb-5">Active Bids</h2>
+      </div>
+        <div class="row mt-3">
+          <div class="col-md-6 offset-md-3">
+            <form>
+              <div class="input-group mb-3">
+                <input type="text" class="form-control" placeholder="Search by Offer ID" id="search-input">
+                <div class="input-group-append">
+                  <button class="btn btn-outline-secondary" type="button" id="search-button">Search</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="row mt-3">
+          <div class="col-md-10 offset-md-1">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col">Offer ID</th>
+                  <th scope="col">Quantity</th>
+                  <th scope="col">Price per Unit</th>
+                  <th scope="col">Active</th>
+                  <th scope="col">Bidder</th>
+                </tr>
+              </thead>
+              <tbody id="offer-table-body">
+                <!-- Offer data will be dynamically inserted here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <script>
+        // Function to get all active energy offers and display them in the table
+function displayActiveOffers() {
+  $.ajax({
+    url: '/getActiveOffers', // Change this to the actual server endpoint
+    type: 'GET',
+    success: function(response) {
+      // Empty the current table rows
+      $('#offer-table-body').empty();
+      // Loop through the response data and insert it into the table
+      for (let i = 0; i < response.length; i++) {
+        let offer = response[i];
+        let bidButton = `<button class="btn btn-outline-primary btn-sm" data-toggle="modal" data-target="#bidModal" data-offer-id="${offer.offerId}">View Bids</button>`;
+        let row = `<tr><td>${offer.offerId}</td><td>${offer.quantity}</td><td>${offer.pricePerUnit}</td><td>${offer.active}</td><td>${bidButton}</td></tr>`;
+        $('#offer-table-body').append(row);
+      }
+    },
+    error: function(error) {
+      console.log(error);
+    }
+  });
+}
+
+// Function to get all bids for a specific offer ID
+function displayOfferBids(offerId) {
+  $.ajax({
+    url: `/getOfferBids?offerId=${offerId}`, // Change this to the actual server endpoint
+    type: 'GET',
+    success: function(response) {
+      // Empty the current modal content
+      $('#bidModal .modal-body').empty();
+      // Loop through the response data and insert it into the modal
+      for (let i = 0; i < response.length; i++) {
+        let bid = response[i];
+        let row = `<p>Quantity: ${bid.quantity}, Price per Unit: ${bid.pricePerUnit}, Active: ${bid.active}</p>`;
+        $('#bidModal .modal-body').append(row);
+      }
+    },
+    error: function(error) {
+      console.log(error);
+    }
+  });
+}
+
+// Trigger the displayActiveOffers function on page load
+$(document).ready(function() {
+  displayActiveOffers();
+});
+
+// Bind the search button to display offers matching the search input
+</script>
+	
+
+
+
+</body>
+</html>
