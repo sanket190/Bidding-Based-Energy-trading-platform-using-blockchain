@@ -6,13 +6,14 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Enenrgy Trading Market</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-aFq/bzH65dt+w6FI2ooMVUpc+21e0SRygnTpmBvdBgSdnuTN7QbdgL+OapgHtvPp" crossorigin="anonymous">
+    <script src="../dev/Producer.js" defer></script>
   </head>
   <body>
     <nav class="navbar navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
       <div class="container-fluid">
         
         <a class="navbar-brand" href="#">
-          <img src="/images/blockchain_log.png" alt="logo" width="50" height="34">
+          <img src="../images/blockchain_log.png" alt="logo" width="50" height="34">
         </a>    
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -52,17 +53,17 @@
           <h2 class="text-center mb-4">Energy Trading Platform</h2>
           <div class="card">
             <div class="card-body">
-              <form action="" method="POST">
+              <form id="myForm" action="../public/Marketplace.html" method="GET">
                 <div class="form-group">
-                  <label for="Address">Account Address</label>
-                  <input type="Address" class="form-control" id="email" name="email" required>
+                  <label for="account">Account Address</label>
+                  <input type="Address" class="form-control" id="account" name="Account" required>
                 </div>
                 <div class="form-group">
-                  <label for="password">Private Key</label>
-                  <input type="password" class="form-control" id="password" name="password" required>
+                  <label for="privatekey">Private Key</label>
+                  <input type="password" class="form-control" id="privatekey" name="PrivateKey" required>
                 </div>
                 <div class="form-group text-center">
-                  <button type="submit" class="btn btn-primary" onclick="openNewPage()">Login</button>
+                  <button type="submit" class="btn btn-primary" id="submit" >Login</button>
                 </div>
               </form>
               <div class="text-center">
@@ -73,16 +74,44 @@
         </div>
       </div>
     </div>
-    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/js/bootstrap.bundle.min.js" integrity="sha384-qKXV1j0HvMUeCBQ+QVp7JcfGl760yU08IQ+GpUo5hlbpg51QRiuqHAJz8+BrxE/N" crossorigin="anonymous"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/js/bootstrap.bundle.min.js" integrity="sha384-qKXV1j0HvMUeCBQ+QVp7JcfGl760yU08IQ+GpUo5hlbpg51QRiuqHAJz8+BrxE/N" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/js/bootstrap.min.js" integrity="sha384-heAjqF+bCxXpCWLa6Zhcp4fu20XoNIA98ecBC1YkdXhszjoejr5y9Q77hIrv8R9i" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-    <!-- <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.1/dist/umd/popper.min.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.1/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+J9B0BkNE10H0jt2imIv1j6KwBQY.." crossorigin="anonymous"></script>
     <script>
-      function openNewPage() {
-        window.location.href = "/Marketplace.html";
-      }
+    
+      const submitButton = document.querySelector('#submit');
+      // const form = document.querySelector('#myForm');
+      var flag = 0;
+      
+      submitButton.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const account = document.querySelector('#account').value;
+        const key = document.querySelector('#privatekey').value;
+
+        const verifyResponse = await fetch('http://localhost:3000/verify', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            account,
+            key
+          })
+        });
+
+        // const verifyResult = await verifyResponse.json();
+        console.log(verifyResponse.status);
+
+        // if (verifyResponse.status!=200) {
+        
+        // }
+        // console.log(flag)
+        // form.submit();
+      });
+
     </script>
   </body>
 </html>

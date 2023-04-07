@@ -7,7 +7,8 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-aFq/bzH65dt+w6FI2ooMVUpc+21e0SRygnTpmBvdBgSdnuTN7QbdgL+OapgHtvPp" crossorigin="anonymous">
-  <link rel="stylesheet" href="/style.css">
+  <!-- <link rel="stylesheet" href="/style.css"> -->
+  <script src="../dev/Producer.js" defer></script>
 
 </head>
 <body>
@@ -15,7 +16,7 @@
         <div class="container-fluid">
           
           <a class="navbar-brand" href="#">
-            <img src="/images/blockchain_log.png" alt="logo" width="50" height="34">
+            <img src="../images/blockchain_log.png" alt="logo" width="50" height="34">
           </a>    
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -75,7 +76,7 @@
         <div class="row">
           <div class="col-md-6 mx-auto">
           
-              <form id="bid-form mb-5">
+              <form id="bid-form">
                 <div class="form-group">
                   <label for="offer-id">Offer ID:</label>
                   <input type="text" class="form-control" id="offer-id" name="offer-id" placeholder="Enter Offer ID" required>
@@ -92,7 +93,7 @@
                   <input type="checkbox" class="form-check-input" id="active" name="active" checked>
                   <label class="form-check-label" for="active">Active</label>
                 </div>
-                <button type="submit" class="btn btn-primary">Place Bid</button>
+                <button type="submit" class="btn btn-primary" id="submit" >Place Bid</button>
               </form>
              
             
@@ -114,35 +115,49 @@
         const quantity = document.getElementById('quantity').value;
         const pricePerUnit = document.getElementById('price-per-unit').value;
         const active = document.getElementById('active').checked;
+        
     
-        const response = await fetch('/bids', {
+        const response = await fetch('http://localhost:3000/place-bid', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ offerId, quantity, pricePerUnit, active })
         });
-    
+        
         const result = await response.json();
+        if (result.success) {
+          console.log('Bid placed successfully!');
+          // show success message to user
+          const message = document.createElement('p');
+          message.textContent = 'Bid placed successfully!';
+          document.body.appendChild(message);
+        } else {
+          console.error('Bid failed:', result.error);
+          // show error message to user
+          const message = document.createElement('p');
+          message.textContent = 'Bid failed: ' + result.error;
+          document.body.appendChild(message);
+        }
     
-        // Do something with the result, such as showing a confirmation message to the user.
       });
     </script>
     <script>// jQuery code to handle form submission and display loading spinner
       $(document).ready(function() {
         $('#checkOfferBtn').click(function() {
           var offerId = $('#offerIdInput').val();
+          
           if (offerId) {
             // Display loading spinner animation
             $('#spinner').removeClass('d-none');
-      
+            
             // Send AJAX request to server to check offer status
             $.ajax({
-              url: '/checkOfferStatus',
+              url: 'http://localhost:3000/checkOfferStatus',
               type: 'POST',
               data: { offerId: offerId },
               success: function(response) {
                 if (response.active) {
                   // Offer is active, proceed with placing bid
-                  window.location.href = '/placeBid';
+                  alert('Offer is currently active');
                 } else {
                   // Offer is inactive, display error message
                   alert('Offer is currently inactive');
