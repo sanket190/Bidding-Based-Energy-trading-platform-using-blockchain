@@ -123,19 +123,22 @@
           body: JSON.stringify({ offerId, quantity, pricePerUnit, active })
         });
         
-        const result = await response.json();
-        if (result.success) {
+        // const result = await response.json();
+        // console.log(response);
+        if (response.ok) {
           console.log('Bid placed successfully!');
+          alert('Bid placed successfully!')
           // show success message to user
-          const message = document.createElement('p');
-          message.textContent = 'Bid placed successfully!';
-          document.body.appendChild(message);
+          // const message = document.createElement('p');
+          // message.textContent = 'Bid placed successfully!';
+          // document.body.appendChild(message);
         } else {
           console.error('Bid failed:', result.error);
+          alert('Bid placed failed');
           // show error message to user
-          const message = document.createElement('p');
-          message.textContent = 'Bid failed: ' + result.error;
-          document.body.appendChild(message);
+          // const message = document.createElement('p');
+          // message.textContent = 'Bid failed: ' + result.error;
+          // document.body.appendChild(message);
         }
     
       });

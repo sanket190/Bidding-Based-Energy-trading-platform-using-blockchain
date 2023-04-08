@@ -75,7 +75,7 @@
                   <th scope="col">Bidder</th>
                 </tr>
               </thead>
-              <tbody id="offer-table-body">
+              <tbody id="Bids-table-body">
                 <!-- Offer data will be dynamically inserted here -->
               </tbody>
             </table>
@@ -84,31 +84,34 @@
       </div>
       <script>
         // Function to get all active energy offers and display them in the table
-function displayActiveOffers() {
-  $.ajax({
-    url: '/getActiveOffers', // Change this to the actual server endpoint
-    type: 'GET',
-    success: function(response) {
-      // Empty the current table rows
-      $('#offer-table-body').empty();
-      // Loop through the response data and insert it into the table
-      for (let i = 0; i < response.length; i++) {
-        let offer = response[i];
-        let bidButton = `<button class="btn btn-outline-primary btn-sm" data-toggle="modal" data-target="#bidModal" data-offer-id="${offer.offerId}">View Bids</button>`;
-        let row = `<tr><td>${offer.offerId}</td><td>${offer.quantity}</td><td>${offer.pricePerUnit}</td><td>${offer.active}</td><td>${bidButton}</td></tr>`;
-        $('#offer-table-body').append(row);
-      }
-    },
-    error: function(error) {
-      console.log(error);
-    }
-  });
-}
-
+    fetch('http://localhost:3000/getActiveBids')
+      .then(response => response.json())
+      .then(current_bids=> {
+       // Find the table body element
+      const tableBody = document.getElementById('Bids-table-body');
+    
+    // Remove any existing rows from the table body
+      tableBody.innerHTML = '';
+    
+    // Loop through the list of offers and create a row for each offer
+      current_bids.forEach(bid => {
+      const tableRow = document.createElement('tr');
+      tableRow.innerHTML = `
+        <td>${bid.offerId}</td>
+        <td>${bid.quantity}</td>
+        <td>${bid.pricePerUnit}</td>
+        <td>${bid.active}</td>
+        <td>${bid.seller}</td>
+      `;
+      // Add the row to the table body
+      tableBody.appendChild(tableRow);
+    });
+  })
+  .catch(error => console.error(error));
 // Function to get all bids for a specific offer ID
 function displayOfferBids(offerId) {
   $.ajax({
-    url: `/getOfferBids?offerId=${offerId}`, // Change this to the actual server endpoint
+    url: `/getOfferBids?offerId=${offerId}`, 
     type: 'GET',
     success: function(response) {
       // Empty the current modal content

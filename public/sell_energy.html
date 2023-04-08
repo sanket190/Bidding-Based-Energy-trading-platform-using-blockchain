@@ -52,7 +52,7 @@
         <h2 class="text-center ">Create an Energy Offer</h2>
       </div>
       <div class="container mx-auto my-auto py-4 px-auto border border-primary">
-        <form>
+        <form id="sell-form">
           <div class="form-group">
             <label for="quantityInput">Quantity:</label>
             <input type="text" class="form-control" id="quantityInput" placeholder="Enter quantity">
@@ -65,7 +65,7 @@
             <label for="durationInput">Duration:</label>
             <input type="text" class="form-control" id="durationInput" placeholder="Enter duration">
           </div>
-          <button type="submit" class="btn btn-primary" id="createOfferBtn">Create Offer</button>
+          <button type="submit" class="btn btn-primary" id="submit">Create Offer</button>
         </form>
         </div>
       
@@ -81,6 +81,36 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.1/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+J9B0BkNE10H0jt2imIv1j6KwBQY.." crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+       const sellForm = document.getElementById('sell-form');
+    
+        sellForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+    
+        const Quantity = document.getElementById('quantityInput').value;
+        const PricePerUnit = document.getElementById('pricePerUnitInput').value;
+        const Duration = document.getElementById('durationInput').value;
+        // const active = document.getElementById('active').checked;
+        
+    
+        const response = await fetch('http://localhost:3000/offer-energy', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({Quantity, PricePerUnit,Duration})
+        });
+        
+        
+        if (response.ok) {
+          alert('Offer created successfully');
+        } else {
+          alert('Offer creation failed');
+        }
+    
+      });
+
+       
+     
+    </script>
 
 </body>
 </html>

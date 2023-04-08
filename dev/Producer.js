@@ -8,7 +8,7 @@ const web3 = new Web3('http://localhost:8545');
 
 
 
-const energyMarketContractAddress = '0x45153482885aa605345DC24E4E48aAee31B5dF00'; // Replace with the actual contract address
+const energyMarketContractAddress = '0x401c1095a587EC456726152d51c77e1e4c723b89'; // Replace with the actual contract address
 const contractAbi = require('./contractabi.json');
 const energyMarketContract = new web3.eth.Contract(contractAbi, energyMarketContractAddress);
 app.use(bodyParser.json());
@@ -218,6 +218,38 @@ app.post('/place-bid', async (req, res) => {
     res.status(500).send('Error placing bid.');
   }
 });
+
+
+app.get('/getActiveBids', async (req, res) => {
+  try {
+    // res.sendFile('/home/sanket/Subjects/Btech_project/new_energy_market/Marketplace.html');
+    const BidCount = await energyMarketContract.methods.getBidCount().call();
+   
+    const current_Bids = [];
+
+    for (let i = 0; i < BidCount; i++) {
+      const BidArrayLen = await energyMarketContract.methods.getBidsArrayLength(i).call();
+      for(let j = 0; j< BidArrayLen; j++){
+        const bids = await energyMarketContract.methods.bids(i,j).call();
+        current_Bids.push({
+          offerId:i,
+          seller: bids.buyer,
+          quantity: bids.quantity,
+          pricePerUnit: bids.pricePerUnit,
+          active: bids.active
+        });
+      }
+    }
+  
+    res.json(current_Bids);
+  } catch (error) {
+    console.error('Error getting Bids details:', error);
+    res.status(500).send('Internal server error');
+  }
+});
+
+
+
 
 
 app.listen(3000, () => console.log('API server started on port 3000'));
