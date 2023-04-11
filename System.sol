@@ -19,12 +19,15 @@ contract EnergyMarket {
         bool active;
     }
 
-    Offer[] public offers;
+    mapping(uint256 => Offer) public offers;
     mapping (uint256 => Bid[]) public bids;
-    uint256 offerId=0;
+    uint256 public offerLength=0;
+    uint256 public bidCount =0;
+   
 
     function createOffer(uint256 _quantity, uint256 _pricePerUnit, uint256 _duration) public {
-        offers.push(Offer({
+        uint256 offerId = offerLength;
+        offers[offerId] = Offer({
             seller: msg.sender,
             quantity: _quantity,
             pricePerUnit: _pricePerUnit,
@@ -32,14 +35,21 @@ contract EnergyMarket {
             timestamp: block.timestamp,
             offerId: offerId,
             active: true
-        }));
-        offerId+=1;
+        });
+        offerLength+=1;
+        
     }
 
     function getOfferLength() public view returns (uint256) {
-        return offers.length;
+        return offerLength;
     }
-  
+
+    function getBidCount() public view returns (uint256){
+        return bidCount;
+    }
+    function getBidsArrayLength(uint _offerId) public view returns (uint) {
+        return bids[_offerId].length;
+    }
 
     function placeBid(uint256 _offerId, uint256 _quantity, uint256 _pricePerUnit, bool _active) public {
         require(offers[_offerId].active, "Offer is no longer active");
@@ -50,6 +60,7 @@ contract EnergyMarket {
             pricePerUnit: _pricePerUnit,
             active: _active
         }));
+        bidCount+=1;
     }
 
     function selectBid(uint256 _offerId) public payable {
