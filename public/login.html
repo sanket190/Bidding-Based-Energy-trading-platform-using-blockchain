@@ -11,10 +11,9 @@
   <body>
     <nav class="navbar navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
       <div class="container-fluid">
-        
         <a class="navbar-brand" href="#">
           <img src="../images/blockchain_log.png" alt="logo" width="50" height="34">
-        </a>    
+        </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -24,29 +23,31 @@
               <a class="nav-link active" aria-current="page" href="#">Home</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link active" href="#">Pricing</a>
+              <a class="nav-link active" id="pricing-link" href="#">Pricing</a>
             </li>
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Features
               </a>
               <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="#">Wallet</a></li>
-                <li><a class="dropdown-item" href="#">Earn</a></li>
+                <li><a class="dropdown-item" id="wallet" href="#">Wallet</a></li>
+                <li><a class="dropdown-item" id="Earn" href="#">Earn</a></li>
                 <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="#">About</a></li>
+                <li><a class="dropdown-item" id="About" href="#">About</a></li>
               </ul>
             </li>
             <li class="nav-item">
-              <a class="nav-link active ">Contact us</a>
+              <a class="nav-link active" href="#">Contact Us</a>
             </li>
           </ul>
-          <form class="d-flex" role="search">
+          <form class="d-flex">
             <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
             <button class="btn btn-outline-success" type="submit">Search</button>
           </form>
         </div>
       </div>
     </nav>
+    
     <div class="container">
       <div class="row">
         <div class="col-md-6 offset-md-3 mt-5">
@@ -63,7 +64,7 @@
                   <input type="password" class="form-control" id="privatekey" name="PrivateKey" required>
                 </div>
                 <div class="form-group text-center">
-                  <button type="submit" class="btn btn-primary" id="submit" >Login</button>
+                  <button type="submit" class="btn btn-primary" id="sub" >Login</button>
                 </div>
               </form>
               <div class="text-center">
@@ -74,16 +75,10 @@
         </div>
       </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/js/bootstrap.bundle.min.js" integrity="sha384-qKXV1j0HvMUeCBQ+QVp7JcfGl760yU08IQ+GpUo5hlbpg51QRiuqHAJz8+BrxE/N" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/js/bootstrap.min.js" integrity="sha384-heAjqF+bCxXpCWLa6Zhcp4fu20XoNIA98ecBC1YkdXhszjoejr5y9Q77hIrv8R9i" crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.1/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+J9B0BkNE10H0jt2imIv1j6KwBQY.." crossorigin="anonymous"></script>
-    <script>
+     <script>
     
-      const submitButton = document.querySelector('#submit');
-      // const form = document.querySelector('#myForm');
+      const submitButton = document.querySelector('#sub');
+      // const form = document.getElementById('myForm');
       var flag = 0;
       
       submitButton.addEventListener('click', async (event) => {
@@ -103,14 +98,43 @@
         });
 
         // const verifyResult = await verifyResponse.json();
-        console.log(verifyResponse.status);
+        if (verifyResponse.status === 200) {
+          // i want to perform the action of form 
+          document.getElementById("myForm").submit();
+        } else {
+          const errorMessage = await verifyResponse.json();
+          console.log(errorMessage);
+          // Display error message to user here
+        }
 
-        // if (verifyResponse.status!=200) {
-        
-        // }
-        // console.log(flag)
-        // form.submit();
+       
       });
+      const links = document.querySelectorAll('#pricing-link, #wallet, #Earn, #About');
+        links.forEach(link => {
+                link.addEventListener('click', event => {
+                event.preventDefault();
+
+                // Check if user is logged in
+                const isLoggedIn = checkIfUserIsLoggedIn();
+
+                // If user is not logged in, show warning and prevent navigation
+                if (!isLoggedIn) {
+                  alert('You need to log in to access this page!');
+                  return;
+                }
+
+                // If user is logged in, navigate to the link's href
+                window.location.href = link.href;
+              });
+            });
+
+        function checkIfUserIsLoggedIn() {
+          // Your login logic here
+          return false;
+        }
+
+        
+
 
     </script>
   </body>

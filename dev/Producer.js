@@ -8,7 +8,7 @@ const web3 = new Web3('http://localhost:8545');
 
 
 
-const energyMarketContractAddress = '0x401c1095a587EC456726152d51c77e1e4c723b89'; // Replace with the actual contract address
+const energyMarketContractAddress = '0xDdb8b1b56dE63673FEc8aA80bfB21F7f3660230C'; // Replace with the actual contract address
 const contractAbi = require('./contractabi.json');
 const energyMarketContract = new web3.eth.Contract(contractAbi, energyMarketContractAddress);
 app.use(bodyParser.json());
@@ -65,6 +65,8 @@ function verify(account, key) {
   }
 }
 
+
+
 app.post('/verify', bodyParser.json(), (req, res) => {
   const account = req.body.account;
   const key = req.body.key;
@@ -94,6 +96,19 @@ app.post('/checkOfferStatus', async (req, res) => {
   }
 });
 
+
+
+app.get('/getwallet', async (req, res) => {
+  try {
+    const accountBalance = await web3.eth.getBalance(accountAddress);
+    const x = web3.utils.fromWei(accountBalance, 'ether'); // Convert wei to ether and log the balance
+    res.json({ balance: x, address: accountAddress });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal server error');
+  }
+});
+  
 
 
 
