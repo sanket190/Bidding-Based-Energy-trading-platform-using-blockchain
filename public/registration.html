@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Registration Page</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-aFq/bzH65dt+w6FI2ooMVUpc+21e0SRygnTpmBvdBgSdnuTN7QbdgL+OapgHtvPp" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">    <script src="../dev/Producer.js" defer></script>    
+  <script src="https://cdn.socket.io/socket.io-4.0.1.min.js"></script>
+  <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+  <script src="../dev/server.js" defer></script>
+  <title>Registration</title></head>
+
+<body>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            margin: 0;
+        }
+    
+        .header {
+            padding: 30px;
+            text-align: center;
+            background: #1abc9c;
+            color: white;
+            font-size: 30px;
+        }
+    
+        .footer {
+            padding: 20px;
+            text-align: center;
+            background: #ddd;
+            margin-top: 20px;
+        }
+    
+        .container {
+            padding: 30px;
+            margin-top: 40px;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+        }
+    
+        .table {
+            margin-top: 20px;
+        }
+        
+        .navbar {
+            background-color: #222;
+            transition: background-color 0.5s ease;
+        }
+        
+        .navbar-brand {
+            font-size: 2rem;
+            font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+        
+        
+        
+        .nav-link {
+            font-size: 1.2rem;
+            margin-left: 1rem;
+            transition: transform 0.2s ease;
+        }
+        
+        .nav-link:hover {
+            transform: scale(1.2);
+        }
+        
+        @media (max-width: 768px) {
+            .navbar-brand {
+            font-size: 1.5rem;
+            }
+        
+            .nav-link {
+            font-size: 1rem;
+            margin-left: 0.5rem;
+            }
+            .energy-balance {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            font-size: 14px;
+            color: white;
+        }
+        
+        }
+             
+    </style>
+      <nav class="navbar navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
+        <div class="container-fluid">
+          
+          <a class="navbar-brand" href="#">
+            <img src="../images/blockchain_log.png" alt="logo" width="50" height="34">
+          </a>    
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link active" id ="home" aria-current="page" href="./Marketplace.html">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active" id="info"  href="#">Info</a>
+                 
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Wallets
+                </a>
+                <ul class="dropdown-menu">
+                 
+                  
+                  <li><a class="dropdown-item" id = "energy-wallet" href="#">Energy Wallet</a></li>
+                  <li><a class="dropdown-item" id = "eth-wallet" href="#">Eth wallet</a></li>
+                </ul>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active ">Contact us</a>
+              </li>
+            </ul>
+            <form class="d-flex" role="search">
+              <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+              <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
+          </div>
+        </div> 
+      </nav> 
+
+      
+        <div class="container">
+          <div class="row justify-content-center">
+            <div class="col-md-6">
+              <div class="card">
+                <div class="card-header">
+                  <h4>Registration Form</h4>
+                </div>
+                <div class="card-body">
+                  <form id="myForm" action="../public/Marketplace.html" method="GET">
+                    <div class="form-group">
+                      <label for="name">Name</label>
+                      <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                      <label for="email">Email</label>
+                      <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                      <label for="phone">Mobile Number </label>
+                      <input type="number" class="form-control" id="phone" name="phone" required>
+                    </div>
+                    <div class="form-group">
+                      <label for="account">Account Address</label>
+                      <input type="email" class="form-control" id="account" name="accountAddress" required>
+                    </div>
+                    <div class="form-group">
+                      <label for="password">PrivateKey</label>
+                      <input type="password" class="form-control" id="privatekey" name="privatekey" required>
+                    </div>
+                    <div class="form-group">
+                      <label for="confirm-password">Confirm PrivateKey</label>
+                      <input type="password" class="form-control" id="confirm-privatekey" name="confirm-privatekey" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="reg">Register</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/js/bootstrap.min.js" integrity="sha384-heAjqF+bCxXpCWLa6Zhcp4fu20XoNIA98ecBC1YkdXhszjoejr5y9Q77hIrv8R9i" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.1/dist/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+J9B0BkNE10H0jt2imIv1j6KwBQY.." crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+      <script>
+        
+      const submitButton = document.querySelector('#reg');
+      const form = document.getElementById('myForm');
+      var flag = 0;
+      const socket = io('http://localhost:3000');
+      
+      submitButton.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const Name = document.querySelector('#name').value;
+        const Email = document.querySelector('#email').value;
+        const phone = document.querySelector('#phone').value;
+        const accountAddress = document.querySelector('#account').value;
+        const Privatekey = document.querySelector('#privatekey').value;
+        socket.emit('register', {Name, Email,phone, accountAddress, Privatekey});
+        socket.on('error', (error) => {
+          alert(error); 
+        });
+        socket.on('error-reg', (error) => {
+          alert(error.message); 
+        });
+     
+        socket.on('registrationSuccessful', (response) => {
+          
+          if (response) {
+            // Perform the action of form
+            document.getElementById("myForm").submit();
+          } 
+        });
+
+       
+      });
+      const links = document.querySelectorAll('#pricing-link, #info, #eth-wallet, #energy-wallet,#home');
+            
+            links.forEach(link => {
+              link.addEventListener('click', event => {
+                event.preventDefault();
+      
+                // Emit a "checkLoggedIn" event to the server
+                socket.emit('checkLoggedIn', (isLoggedIn) => {
+                  // If user is not logged in, show warning and prevent navigation
+                  if (!isLoggedIn) {
+                    alert('You need to log in to access this page!');
+                    return;
+                  }
+      
+                  // If user is logged in, navigate to the link's href
+                  window.location.href = link.href;
+                });
+              });
+            });
+        
+      </script>
+      
+</body>
+</html>

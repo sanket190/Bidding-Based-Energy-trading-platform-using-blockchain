@@ -8,49 +8,94 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-aFq/bzH65dt+w6FI2ooMVUpc+21e0SRygnTpmBvdBgSdnuTN7QbdgL+OapgHtvPp" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/css/bootstrap.css" rel="stylesheet" integrity="sha384-aFq/bzH65dt+w6FI2ooMVUpc+21e0SRygnTpmBvdBgSdnuTN7QbdgL+OapgHtvPp" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
-    <!-- <script src="./dev/Producer.js" defer></script> -->
+    <script src="https://cdn.socket.io/socket.io-4.0.1.min.js"></script>
+    <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+    <script src="./dev/server.js" defer></script>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
-        <div class="container-fluid">
-          
-          <a class="navbar-brand" href="#">
-            <img src="../images/blockchain_log.png" alt="logo" width="50" height="34">
-          </a>    
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-              <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="#">Home</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link active" href="#">Pricing</a>
-              </li>
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  Features
-                </a>
-                <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="#">Wallet</a></li>
-                  <li><a class="dropdown-item" href="#">Earn</a></li>
-                  <li><hr class="dropdown-divider"></li>
-                  <li><a class="dropdown-item" href="#">About</a></li>
-                </ul>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link active ">Contact us</a>
-              </li>
-            </ul>
-            <form class="d-flex" role="search">
-              <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-              <button class="btn btn-outline-success" type="submit" id="submit">Search</button>
-            </form>
-          </div>
-        </div>
-      </nav>
-     
+  <style>
+    .navbar {
+     background-color: #222;
+     transition: background-color 0.5s ease;
+   }
+   
+   .navbar-brand {
+     font-size: 2rem;
+     font-weight: bold;
+     animation: pulse 2s infinite;
+   }
+   
+   
+   
+   .nav-link {
+     font-size: 1.2rem;
+     margin-left: 1rem;
+     transition: transform 0.2s ease;
+   }
+   
+   .nav-link:hover {
+     transform: scale(1.2);
+   }
+   
+   @media (max-width: 768px) {
+     .navbar-brand {
+       font-size: 1.5rem;
+     }
+   
+     .nav-link {
+       font-size: 1rem;
+       margin-left: 0.5rem;
+     }
+     .energy-balance {
+       position: absolute;
+       bottom: 10px;
+       right: 10px;
+       font-size: 14px;
+       color: white;
+   }
+   
+   }
+      </style>
+       <nav class="navbar navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
+           <div class="container-fluid">
+             
+             <a class="navbar-brand" href="#">
+               <img src="../images/blockchain_log.png" alt="logo" width="50" height="34">
+             </a>    
+             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+               <span class="navbar-toggler-icon"></span>
+             </button>
+             <div class="collapse navbar-collapse" id="navbarSupportedContent">
+               <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                 <li class="nav-item">
+                   <a class="nav-link active" aria-current="page" href="./Marketplace.html">Home</a>
+                 </li>
+                 <li class="nav-item">
+                   <a class="nav-link active"  href="./info.html">Info</a>
+                    
+                 </li>
+                 <li class="nav-item dropdown">
+                   <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                     Wallets
+                   </a>
+                   <ul class="dropdown-menu">
+                    
+                     
+                     <li><a class="dropdown-item" href="./Energy_balance.html">Energy Wallet</a></li>
+                     <li><a class="dropdown-item" href="./wallet.html">Eth wallet</a></li>
+                   </ul>
+                 </li>
+                 <li class="nav-item">
+                   <a class="nav-link active ">Contact us</a>
+                 </li>
+               </ul>
+               <form class="d-flex" role="search">
+                 <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                 <button class="btn btn-outline-success" type="submit">Search</button>
+               </form>
+             </div>
+           </div> 
+         </nav> 
       <div class="container">
         <div class="row">
           <div class="col-md-6 offset-md-3">
@@ -85,33 +130,68 @@
 
     <script>
     // Fetch the list of offers from the server
-  fetch('http://localhost:3000/offers-list')
-  .then(response => response.json())
-  .then(current_offers => {
-    // Find the table body element
-    const tableBody = document.getElementById('offers-table-body');
-    
-    // Remove any existing rows from the table body
-    tableBody.innerHTML = '';
-    
-    // Loop through the list of offers and create a row for each offer
-    current_offers.forEach(offer => {
-      const tableRow = document.createElement('tr');
-      tableRow.innerHTML = `
-        <td>${offer.offerId}</td>
-        <td>${offer.seller}</td>
-        <td>${offer.quantity}</td>
-        <td>${offer.pricePerUnit}</td>
-        <td>${offer.duration}</td>
-        <td>${new Date(offer.timestamp * 1000).toLocaleString()}</td>
-        <td>${offer.active}</td>
-      `;
-      
-      // Add the row to the table body
-      tableBody.appendChild(tableRow);
+    const socket = io('http://localhost:3000');
+    socket.emit('get-offers');
+    socket.on('error',(error)=>{
+      alert(error);
+    })
+
+    socket.on('offers-list', async (current_offers) =>{
+      try {
+          const tableBody = document.getElementById('offers-table-body');
+        
+          // Remove any existing rows from the table body
+          tableBody.innerHTML = '';
+          
+          // Loop through the list of offers and create a row for each offer
+          current_offers.forEach(offer => {
+            const tableRow = document.createElement('tr');
+            tableRow.innerHTML = `
+              <td>${offer.offerId}</td>
+              <td>${offer.seller}</td>
+              <td>${offer.quantity}</td>
+              <td>${offer.pricePerUnit}</td>
+              <td>${offer.duration}</td>
+              <td>${new Date(offer.timestamp * 1000).toLocaleString()}</td>
+              <td>${offer.active}</td>
+            `;
+            
+            // Add the row to the table body
+            tableBody.appendChild(tableRow);
+          });
+      }
+      catch (error) {
+        alert('Error getting offer details');
+     
+      }
     });
-  })
-  .catch(error => console.error(error));
+  // fetch('http://localhost:3000/offers-list')
+  // .then(response => response.json())
+  // .then(current_offers => {
+  //   // Find the table body element
+  //   const tableBody = document.getElementById('offers-table-body');
+    
+  //   // Remove any existing rows from the table body
+  //   tableBody.innerHTML = '';
+    
+  //   // Loop through the list of offers and create a row for each offer
+  //   current_offers.forEach(offer => {
+  //     const tableRow = document.createElement('tr');
+  //     tableRow.innerHTML = `
+  //       <td>${offer.offerId}</td>
+  //       <td>${offer.seller}</td>
+  //       <td>${offer.quantity}</td>
+  //       <td>${offer.pricePerUnit}</td>
+  //       <td>${offer.duration}</td>
+  //       <td>${new Date(offer.timestamp * 1000).toLocaleString()}</td>
+  //       <td>${offer.active}</td>
+  //     `;
+      
+  //     // Add the row to the table body
+  //     tableBody.appendChild(tableRow);
+  //   });
+  // })
+  // .catch(error => console.error(error));
   </script>
 
 

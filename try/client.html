@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Socket.IO Client Example</title>
+  <script src="https://cdn.socket.io/socket.io-4.0.1.min.js"></script>
+  <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+</head>
+<body>
+  <h1>Socket.IO Client Example</h1>
+  <form>
+    <label for="account">Account:</label>
+    <input type="text" name="account" id="account"><br>
+    <label for="key">Key:</label>
+    <input type="text" name="key" id="key"><br>
+    <input type="submit" value="Verify">
+  </form>
+
+  <script>
+    const socket = io('http://localhost:3000');
+
+    const form = document.querySelector('form');
+    const accountInput = document.getElementById('account');
+    const keyInput = document.getElementById('key');
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const account = accountInput.value;
+      const key = keyInput.value;
+
+      socket.emit('verify', { account, key }, (response) => {
+        console.log(response);
+      });
+    });
+  </script>
+</body>
+</html>

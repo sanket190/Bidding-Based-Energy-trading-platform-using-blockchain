@@ -1,71 +1,46 @@
 [
 	{
-		"inputs": [
+		"inputs": [],
+		"name": "bidCount",
+		"outputs": [
 			{
 				"internalType": "uint256",
-				"name": "_quantity",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_pricePerUnit",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_duration",
+				"name": "",
 				"type": "uint256"
 			}
 		],
-		"name": "createOffer",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_offerId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_quantity",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_pricePerUnit",
-				"type": "uint256"
-			},
-			{
-				"internalType": "bool",
-				"name": "_active",
-				"type": "bool"
-			}
-		],
-		"name": "placeBid",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_offerId",
-				"type": "uint256"
-			}
-		],
-		"name": "selectBid",
-		"outputs": [],
-		"stateMutability": "payable",
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{
 		"inputs": [],
-		"name": "bidCount",
+		"name": "biddingDuration",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "biddingEndTime",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "biddingStartTime",
 		"outputs": [
 			{
 				"internalType": "uint256",
@@ -118,6 +93,83 @@
 	{
 		"inputs": [
 			{
+				"internalType": "uint256",
+				"name": "_quantity",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_pricePerUnit",
+				"type": "uint256"
+			}
+		],
+		"name": "createOffer",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "currentDemand",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "currentEquilibriumPrice",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "currentRound",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "currentSupply",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "endRound",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "address",
 				"name": "",
 				"type": "address"
@@ -132,6 +184,19 @@
 			}
 		],
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "round",
+				"type": "uint256"
+			}
+		],
+		"name": "externalEndRound",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -167,6 +232,63 @@
 		"type": "function"
 	},
 	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_account",
+				"type": "address"
+			}
+		],
+		"name": "getEnergyBalance",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_account",
+				"type": "address"
+			}
+		],
+		"name": "getEthBalance",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "round",
+				"type": "uint256"
+			}
+		],
+		"name": "getHighestBidPrice",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
 		"inputs": [],
 		"name": "getOfferLength",
 		"outputs": [
@@ -177,6 +299,56 @@
 			}
 		],
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "round",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "highestBidPrice",
+				"type": "uint256"
+			}
+		],
+		"name": "getWinningBidder",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "initialBiddingPrice",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_biddingDuration",
+				"type": "uint256"
+			}
+		],
+		"name": "initiateAuction",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -203,7 +375,7 @@
 		"name": "offers",
 		"outputs": [
 			{
-				"internalType": "address",
+				"internalType": "address payable",
 				"name": "seller",
 				"type": "address"
 			},
@@ -215,11 +387,6 @@
 			{
 				"internalType": "uint256",
 				"name": "pricePerUnit",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "duration",
 				"type": "uint256"
 			},
 			{
@@ -239,6 +406,55 @@
 			}
 		],
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_offerId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_quantity",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_pricePerUnit",
+				"type": "uint256"
+			}
+		],
+		"name": "submitBid",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "totalRounds",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "energyAmount",
+				"type": "uint256"
+			}
+		],
+		"name": "updateEnergyBalance",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	}
 ]
