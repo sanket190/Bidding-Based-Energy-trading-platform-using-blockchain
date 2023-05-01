@@ -10,13 +10,16 @@
   <!-- <link rel="stylesheet" href="/style.css"> -->
   <script src="https://cdn.socket.io/socket.io-4.0.1.min.js"></script>
   <script src="http://localhost:3000/socket.io/socket.io.js"></script>
-  <script src="../dev/server.js" defer></script> -->
+  <script src="../dev/server.js" defer></script>
 
 </head>
 <body>
   <style>
     .navbar {
      background-color: #222;
+     position: sticky;
+     position: -webkit-sticky; 
+     top: 0;
      transition: background-color 0.5s ease;
    }
    
@@ -53,9 +56,154 @@
        right: 10px;
        font-size: 14px;
        color: white;
-   }
-   
-   }
+   }}
+   /* Styling for the check offer status form */
+
+.form-group label {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+.btn-primary:hover {
+  background-color: #0069d9;
+  border-color: #0062cc;
+}
+
+#spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Styling for the place bid form */
+
+#bid-form label {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+#bid-form input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+#bid-form input::-webkit-outer-spin-button,
+#bid-form input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+#bid-form,#id  {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Form labels */
+label {
+  font-weight: bold;
+}
+
+/* Form inputs */
+input {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+}
+
+/* Form submit button */
+#submit,#checkOfferBtn {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #007bff;
+  color: #fff;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+}
+
+
+#submit:hover {
+  background-color: #218838;
+  border-color: #1e7e34;
+}
+
+#submit:active {
+  background-color: #1e7e34;
+  border-color: #1c7430;
+}
+
+#submit:focus {
+  outline: none;
+  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.5);
+}
+
+#submit:disabled {
+  background-color: #6c757d;
+  border-color: #6c757d;
+}
+
+#submit:disabled:hover {
+  background-color: #6c757d;
+  border-color: #6c757d;
+}
+
+#submit:disabled:focus {
+  box-shadow: none;
+}
+
+.form-check-label {
+  font-weight: normal;
+}
+
+.form-check-input:checked ~ .form-check-label::before {
+  background-color: #28a745;
+  border-color: #28a745;
+}
+
+.form-check-input:focus ~ .form-check-label::before {
+  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.5);
+}
+
+.form-check-input:disabled ~ .form-check-label {
+  color: #6c757d;
+}
+
+.form-check-input:disabled ~ .form-check-label::before {
+  background-color: #f8f9fa;
+  border-color: #6c757d;
+}
+
+.form-check-input:disabled ~ .form-check-label::after {
+  background-color: #6c757d;
+}
+
+/* Animation for the loading spinner */
+
+.spinner-border {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
       </style>
        <nav class="navbar navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
            <div class="container-fluid">
@@ -101,11 +249,11 @@
       <div class="col-md-6 offset-md-3">
         <h2 class="text-center ">Placed Bid</h2>
       </div>
-      <div class="container mx-auto my-4 py-4 border border-primary">
+      <div class="container mx-auto my-4 py-4 border border-radius">
         <div class="row">
           <div class="col-md-6 mx-auto">
             <!-- HTML code for input form -->
-              <div class="form-group">
+              <div class="form-group" id ="id">
                 <label for="offerIdInput">Offer ID:</label>
                 <input type="text" class="form-control" id="offerIdInput" placeholder="Enter Offer ID">
               </div>
@@ -120,7 +268,7 @@
       </div>
       
      
-      <div class="container mx-auto my-auto py-4 border border-primary">
+      <div class="container mx-auto my-auto py-4 border border-radius">
         <div class="row">
           <div class="col-md-6 mx-auto">
           
@@ -137,10 +285,10 @@
                   <label for="price-per-unit">Price Per Unit:</label>
                   <input type="number" class="form-control" id="price-per-unit" name="price-per-unit" placeholder="Price Per Unit" required>
                 </div>
-                <div class="form-check">
+                <!-- <div class="form-check">
                   <input type="checkbox" class="form-check-input" id="active" name="active" checked>
                   <label class="form-check-label" for="active">Active</label>
-                </div>
+                </div> -->
                 <button type="submit" class="btn btn-primary" id="submit" >Place Bid</button>
               </form>
              
@@ -168,12 +316,12 @@
         const offerId = document.getElementById('offer-id').value;
         const quantity = document.getElementById('quantity').value;
         const pricePerUnit = document.getElementById('price-per-unit').value;
-        const active = document.getElementById('active').checked;
+        // const active = document.getElementById('active').checked;
         socket.on('error', (error) => {
           alert(error); 
         });
     
-        socket.emit('place-bid', {offerId,quantity,pricePerUnit,active});
+        socket.emit('place-bid', {offerId,quantity,pricePerUnit});
         
         socket.on('bidplaced', (response) => {
           if (response) {

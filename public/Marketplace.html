@@ -106,7 +106,7 @@
         <div class="d-flex align-items-center">
           <div class="card text-black bg-light mb-3" style="position: absolute; top: 150px; right: 20px;">
             <div class="card-header" id ="energy-balance">Available Energy Balance</div>
-            <div class="card-body">
+            <div class="card-body" id="balance">
               <p class="text-center mb-1" id="balance-body">0</p>
             </div>
           </div>
@@ -177,20 +177,28 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
       // select the balance card element
-      const balanceCard = document.querySelector('#energy-balance');
+      // const balanceCard = document.querySelector('#energy-balance');
     
       // establish socket connection
       const socket = io('http://localhost:3000');
-    
-      // listen for 'energyBalance' event from server
-      socket.on('energyBalance', (data) => {
-        // update the balance card with the available energy balance
-        // console.log(data);
-        balanceCard.querySelector('#balance-body').textContent = data.availableEnergyBalance;
+
+      socket.emit('Energy_balance');
+
+      socket.on('showenergy', async (data) => {
+          const balanceCard = document.querySelector('#balance');
+          balanceCard.querySelector('#balance-body').textContent = data.balance;
+          
       });
     
+      // // listen for 'energyBalance' event from server
+      // socket.on('energyBalance', (data) => {
+      //   // update the balance card with the available energy balance
+      //   // console.log(data);
+      //   balanceCard.querySelector('#balance-body').textContent = data.availableEnergyBalance;
+      // });
+    
       // emit 'fetchEnergyBalance' event to server
-      socket.emit('fetchEnergyBalance');
+      // socket.emit('fetchEnergyBalance');
     
     </script>
     

@@ -134,7 +134,7 @@
       <div class="row mt-5">
         <div class="col-md-12">
           <div class="card text-center">
-            <div class="card-body">
+            <div class="card-body" id="balance">
               <h5 class="card-title" id="energy-balance">Current Energy Balance</h5>
               <p class="card-text" id="balance-body">0</p>
             </div>
@@ -149,63 +149,70 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+J9B0BkNE10H0jt2imIv1j6KwBQY.." crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        
-            const balanceCard = document.querySelector('#energy-balance');
+              
+                // Connect to the server-side Socket.io instance
+      const socket = io('http://localhost:3000');
 
-            const socket = io('http://localhost:3000');
-            socket.emit('Energy_balance');
-            socket.on('error',(error)=>{
-              alert(error);
-            })
+      // Listen for the 'showenergy' event and update the balance card with the available energy balance
+      socket.emit('Energy_balance');
 
-            // fetch the Energy_balance API
-            socket.on('showbalance',(data) => {
-                // update the balance card with the available energy balance
-                balanceCard.querySelector('#balance-body').textContent = data.balance;
-            })
-            .catch(error => console.error(error));
+      socket.on('showenergy', async (data) => {
+          const balanceCard = document.querySelector('#balance');
+          balanceCard.querySelector('#balance-body').textContent = data.balance;
+          console.log(data);
+      });
 
+      // Listen for the 'error' event and display an alert if there's an error
+      socket.on('error', (error) => {
+          alert(error);
+      });
 
-            const add_energy = document.querySelector('#add-energy');
-            const withdraw_energy = document.querySelector('#withdraw-energy');
+      // Listen for the submit event on the 'add-energy' form
+      const addEnergyForm = document.querySelector('#add-energy');
+      addEnergyForm.addEventListener('submit', async (event) => {
+          event.preventDefault();
 
-            add_energy.addEventListener('submit', async (event) => {
-                event.preventDefault();
-                const  energyAmount =  document.querySelector('#add-energy-amount').value;
-                socket.emit('update_balance',({energyAmount}));
-                
-                socket.on('update',(response)=>{
-                   if (response.ok) {
-                          // console.log('Energy added successfully!');
-                          alert(' Energy added successfully!')
-                          
-                      } else {
-                          console.error('ETH add failed:', result.error);
-                          alert('Energy add failed');
-                          
-                      }
-                    });
-            })
+          // Get the amount of energy to add from the form
+          const energyAmount = document.querySelector('#add-energy-amount').value;
 
-            withdraw_energy.addEventListener('submit',async(event) =>{
-               event.preventDefault();
-                const  energyAmount =  document.querySelector('#withdraw-energy-amount').value;
-                socket.emit('update_balance',({energyAmount}));
-                
-                socket.on('update',(response)=>{
-                   if (response.ok) {
-                          // console.log('Energy added successfully!');
-                          alert(' Energy withdraw successfully!')
-                          
-                      } else {
-                          // console.error('ETH withdraw failed', result.error);
-                          alert('Energy withdraw failed');
-                          
-                      }
-                    });
+          // Emit an 'update_balance' event to the server with the energy amount to add
+          socket.emit('update_balance', { energyAmount });
 
+          // Listen for the 'update' event and display a success or error message
+          socket.on('update', (response) => {
+              if (response) {
+                  alert('Energy added successfully!');
+              } else {
+                  console.error('Energy add failed:', response.error);
+                  alert('Energy add failed');
+              }
+          });
+          socket.emit('Energy_balance');
+          
+      });
 
-            })
+      // Listen for the submit event on the 'withdraw-energy' form
+      const withdrawEnergyForm = document.querySelector('#withdraw-energy');
+      withdrawEnergyForm.addEventListener('submit', async (event) => {
+          event.preventDefault();
+
+          // Get the amount of energy to withdraw from the form
+          const energyAmount = document.querySelector('#withdraw-energy-amount').value;
+
+          // Emit an 'update_balance' event to the server with the energy amount to withdraw
+          socket.emit('withdraw_balance', { energyAmount });
+
+          // Listen for the 'update' event and display a success or error message
+          socket.on('withdraw', (response) => {
+              if (response) {
+                  alert('Energy withdraw successfully!');
+              } else {
+                  console.error('Energy withdraw failed:', response.error);
+                  alert('Energy withdraw failed');
+              }
+          });
+          socket.emit('Energy_balance');
+      });
 
 
     </script>

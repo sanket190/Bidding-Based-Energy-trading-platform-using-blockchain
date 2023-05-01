@@ -133,7 +133,7 @@
       <div class="row mt-5">
         <div class="col-md-12">
           <div class="card text-center">
-            <div class="card-body">
+            <div class="card-body" id="balance">
               <h5 class="card-title" id="energy-balance">Current Eth Balance</h5>
               <p class="card-text" id="balance-body">0</p>
             </div>
@@ -149,7 +149,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         
-            const balanceCard = document.querySelector('#energy-balance');
+            const balanceCard = document.querySelector('#balance');
             const socket = io('http://localhost:3000');
             socket.emit('getwallet');
             socket.on('error',(error)=>{
