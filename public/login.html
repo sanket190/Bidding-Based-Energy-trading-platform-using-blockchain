@@ -22,7 +22,7 @@
      .navbar-brand {
        font-size: 2rem;
        font-weight: bold;
-       animation: pulse 2s infinite;
+       animation: pulse 2s infinite; 
      }
      
      
@@ -138,16 +138,20 @@
       const form = document.getElementById('myForm');
       var flag = 0;
       const socket = io('http://localhost:3000');
-      
+     
+    
       submitButton.addEventListener('click', async (event) => {
         event.preventDefault();
         const account = document.querySelector('#account').value;
         const key = document.querySelector('#privatekey').value;
+        const url = `../public/Marketplace.html?accountAddress=${encodeURIComponent(account)}`;
+        window.location.href = url;
+        
         socket.emit('login', { account, key });
         socket.on('error', (error) => {
           alert(error.message); 
         });
-        
+       
         socket.on('loginSuccessful', (response) => {
           // console.log(response)
           if (response) {

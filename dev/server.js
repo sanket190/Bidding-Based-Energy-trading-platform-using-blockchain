@@ -18,8 +18,9 @@ app.get('/', (req, res) => {
 
 
 
-const energyMarketContractAddress = '0x6469aF4eF604a2642397F4198d68b722aD4d5684'; // Replace with the actual contract address
+const energyMarketContractAddress = '0xDa08F378EA5f1eC711cA9D679F1e9b8a707d1295'; // Replace with the actual contract address
 const contractAbi = require('./contractabi.json');
+const { off } = require('process');
 const energyMarketContract = new web3.eth.Contract(contractAbi, energyMarketContractAddress);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -30,8 +31,10 @@ var accountPrivateKey;
 var Name;
 var email;
 var phone;
+// var offerId;
 // var Password;
 const users = {};
+// const users = [];
 
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -42,15 +45,11 @@ app.use((req, res, next) => {
 
 
 
-
 io.on('connection', (socket) => {
-  console.log('a user connected');
-  
-  socket.accountAddress;
-  socket.privateKey;
-  socket.Name;
-  socket.email;
+  console.log("user is connected");
   const login=false;
+
+
 
   function verify(account, key) {
         try {
@@ -78,6 +77,8 @@ io.on('connection', (socket) => {
        
         web3.eth.accounts.wallet.add(key);
         web3.eth.defaultAccount = account;
+        accountAddress = account;
+        accountPrivateKey = key;
 
           return true;
         } catch (error) {
@@ -88,12 +89,108 @@ io.on('connection', (socket) => {
   }
 
 
-  socket.on('verify', (data) => {
-    const result = verify(data.account, data.key);
-    if (result) {
-      socket.emit('verificationResponse', result);
-    } else {
-      socket.emit('verificationResponse', result);
+
+ 
+
+    // Register event handler
+  socket.on('register', async (data) => {
+      // Store user information in users object
+      const name = data.Name;
+      const Email = data.Email;
+      const AccountAddress = String(data.accountAddress);
+      const PrivateKey = String(data.Privatekey);
+      const Phone = data.phone;
+     
+
+      const result = verify(AccountAddress, PrivateKey);
+      
+     if (AccountAddress in users){
+      socket.emit("error-reg",{message:'Account is already registered'});
+     }
+     else{
+        users[AccountAddress] = {
+          "name": name,
+          "email":Email,
+          "phone":Phone,
+          "privateKey": PrivateKey
+        }
+        accountAddress= AccountAddress,
+        accountPrivateKey= PrivateKey,
+        Name = name;
+        email=Email;
+        phone = Phone;
+       
+        socket.emit('registrationSuccessful',true);
+    }
+     
+  });
+
+
+    // Login event handler
+  socket.on('login',async (data) => {
+      // Check if user exists in users object
+      // console.log(users);
+      account=String(data.account);
+      key= String(data.key);
+      // console.log(users[account].privateKey);
+
+      if (account in users && users[account].privateKey == key) {
+        // Emit a 'login successful' event to the client
+        accountAddress=account,
+        accountPrivateKey=key,
+        
+        socket.emit('loginSuccessful',true);
+      } else {
+        // Emit a 'login failed' event to the client
+        socket.emit('error', { message: 'You have not registered yet' });
+      }
+    const account = String(data.account);
+    const key = String(data.key);
+    });
+
+
+
+
+  socket.on('getInfo', async () => {
+    try {
+      
+      // console.log(accountAddress,accountPrivateKey);
+      const accountBalance = await web3.eth.getBalance(accountAddress);
+      const x = web3.utils.fromWei(accountBalance, 'ether'); // Convert wei to ether and log the balance
+      socket.emit('Info', { name:users[accountAddress].name, email: users[accountAddress].email, balance: x, phone: users[accountAddress].phone, address: accountAddress });
+    } catch (error) {
+      console.error(error);
+      socket.emit('error', { message: 'Internal server error' });
+    }
+  });
+
+
+  socket.on('get-offers', async () => {
+    try {
+      const offerCount = await energyMarketContract.methods.getOfferLength().call();
+      const current_offers = [];
+      // console.log(offerCount);
+
+      for (let i = 0; i < offerCount; i++) {
+        const offer = await energyMarketContract.methods.offers(i).call();
+        current_offers.push({
+          seller: offer.seller,
+          quantity: offer.quantity,
+          pricePerUnit: offer.pricePerUnit,
+          duration: offer.duration,
+          timestamp: offer.timestamp,
+          offerId: offer.offerId,
+          durationUnit: offer.durationUnit,
+          durationEnd:offer.durationEnd,
+          active: offer.active
+        });
+      }
+
+
+      socket.emit('offers-list', current_offers);
+    } catch (error) {
+      console.error('Error getting offer details:', error);
+      socket.emit('error', 'Internal server error');
     }
   });
 
@@ -108,111 +205,7 @@ io.on('connection', (socket) => {
       socket.emit('error', { message: 'Internal server error' });
     }
   });
-
- 
-
-    // Register event handler
-  socket.on('register', async (data) => {
-      // Store user information in users object
-      const name = data.Name;
-      const Email = data.Email;
-      const AccountAddress = String(data.accountAddress);
-      const PrivateKey = String(data.Privatekey);
-      const Phone = data.phone;
-      // console.log(name,Email,AccountAddress,PrivateKey);
-      
-      
-
-      const result = verify(AccountAddress, PrivateKey);
-      
-     if (AccountAddress in users){
-      socket.emit("error-reg",{message:'Account is already registered'});
-     }
-     else{
-        users[AccountAddress] = {
-          "name": name,
-          "email":Email,
-          "phone":Phone,
-          "privateKey": PrivateKey
-        }
-        accountAddress=AccountAddress;
-        accountPrivateKey=PrivateKey;
-        Name = name;
-        email=Email;
-        phone = Phone;
-        // console.log(socket.accountAddress);
-        socket.emit('registrationSuccessful',true);
-    }
-     
-  });
-
-    // Login event handler
-  socket.on('login',async (data) => {
-      // Check if user exists in users object
-      // console.log(users);
-      account=String(data.account);
-      key= String(data.key);
-      // console.log(users[account].privateKey);
-
-      if (account in users && users[account].privateKey == key) {
-        // Emit a 'login successful' event to the client
-        accountAddress=account;
-        accountPrivateKey=key;
-        
-        socket.emit('loginSuccessful',true);
-      } else {
-        // Emit a 'login failed' event to the client
-        socket.emit('error', { message: 'You have not registered yet' });
-      }
-  });
-
-  socket.on('checkLoggedIn', (callback) => {
-    const isLoggedIn = login; // replace with your implementation
-  
-    // Call the callback function with the logged-in status
-    callback(isLoggedIn);
-  });
- 
-
-
-  socket.on('getInfo', async () => {
-    try {
-      // console.log(accouess);
-      const accountBalance = await web3.eth.getBalance(accountAddress);
-      const x = web3.utils.fromWei(accountBalance, 'ether'); // Convert wei to ether and log the balance
-      socket.emit('Info', { name:Name, email: email, balance: x, phone: phone, address: accountAddress });
-    } catch (error) {
-      console.error(error);
-      socket.emit('error', { message: 'Internal server error' });
-    }
-  });
-
-
-  socket.on('get-offers', async () => {
-    try {
-      const offerCount = await energyMarketContract.methods.getOfferLength().call();
-      const current_offers = [];
-
-      for (let i = 0; i < offerCount; i++) {
-        const offer = await energyMarketContract.methods.offers(i).call();
-        current_offers.push({
-          seller: offer.seller,
-          quantity: offer.quantity,
-          pricePerUnit: offer.pricePerUnit,
-          duration: offer.duration,
-          timestamp: offer.timestamp,
-          offerId: offer.offerId,
-          active: offer.active
-        });
-      }
-
-      socket.emit('offers-list', current_offers);
-    } catch (error) {
-      console.error('Error getting offer details:', error);
-      socket.emit('error', 'Internal server error');
-    }
-  });
-  async function Initiate_auction(duration,durationUnit) {
+  async function Initiate_auction(duration_gap,offerId) {
     try {
       const gasPrice = await web3.eth.getGasPrice();
       const gasLimit = 300000;
@@ -223,7 +216,7 @@ io.on('connection', (socket) => {
         gasPrice: Web3.utils.toHex(gasPrice),
         gasLimit: Web3.utils.toHex(gasLimit),
         to: energyMarketContractAddress,
-        data: energyMarketContract.methods.initiateAuction(duration,durationUnit).encodeABI()
+        data: energyMarketContract.methods.initiateAuction(offerId,duration_gap).encodeABI()
       };
 
       // sign and send the transaction
@@ -237,41 +230,119 @@ io.on('connection', (socket) => {
     }
   }
 
+  socket.on('checkLoggedIn', (callback) => {
+    const isLoggedIn = login; // replace with your implementation
+  
+    // Call the callback function with the logged-in status
+    callback(isLoggedIn);
+  });
  
   socket.on('offer-energy', async (data) => {
     try {
-      const quantity = data.Quantity;  // the quantity of energy to sell
-      const pricePerUnit = data.PricePerUnit;  // the price per unit of energy in wei
-      const duration = data.Duration;  // the duration of the offer in seconds
-      const durationUnit = data.DurationUnit;
-  
-  
-      const gasPrice = await web3.eth.getGasPrice();
-      const gasLimit = 300000;
-  
-      const nonce = await web3.eth.getTransactionCount(accountAddress);
-      const txParams = {
+        const quantity = data.Quantity; 
+        const pricePerUnit = data.PricePerUnit; 
+        const duration = data.Duration; 
+        const durationUnit = String(data.DurationUnit);
+        const gasPrice = await web3.eth.getGasPrice();
+        const gasLimit = 300000;
+        const offerId = await energyMarketContract.methods.getOfferLength().call();
+
+        const nonce = await web3.eth.getTransactionCount(accountAddress);
+        const txParams = {
+            nonce: Web3.utils.toHex(nonce),
+            gasPrice: Web3.utils.toHex(gasPrice),
+            gasLimit: Web3.utils.toHex(gasLimit),
+            to: energyMarketContractAddress,
+            data: energyMarketContract.methods.createOffer(quantity, pricePerUnit, duration, durationUnit).encodeABI()
+        };
+        const signedTx = await web3.eth.accounts.signTransaction(txParams, accountPrivateKey);
+        const receipt = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
+
+       
+        console.log(offerId,duration,durationUnit);
+       
+        socket.emit('sellenergy', true);
+       
+        var duration_gap = 1000* duration * convertToSeconds(durationUnit);
+        Initiate_auction(duration_gap, offerId);
+        console.log(duration_gap);
+        
+        setTimeout(() => {
+          endRound(offerId);      
+        }, duration_gap);
+        // console.log(duration_gap);
+
+    } catch (error) {
+        console.error('Transaction failed:', error);
+        socket.emit('error', 'Problem occure while creating offer');
+    }
+  });
+
+  function convertToSeconds(unit) {
+    switch (unit) {
+      case "day":
+        return 86400; // 24 hours * 60 minutes * 60 seconds
+      case "hour":
+        return 3600; // 60 minutes * 60 seconds
+      case "minute":
+        return 60;
+      case "second":
+        return 1;
+      default:
+        throw new Error(`Invalid time unit: ${unit}`);
+    }
+  }
+
+// Send the transaction
+async function sendTransaction(senderAddress,recipientAddress,totalCost) {
+  const ethAmount = String(totalCost);
+  const weiAmount = web3.utils.toWei(ethAmount, 'ether');
+  const nonce = await web3.eth.getTransactionCount(accountAddress);
+  const gasPrice = await web3.eth.getGasPrice();
+  const gasLimit = 300000;
+  const transactionObject = {
+    nonce: nonce,
+    from: senderAddress,
+    to: recipientAddress,
+    value: weiAmount,
+    gas: gasLimit,
+    gasPrice: gasPrice,
+  };
+  const signedTransaction = await web3.eth.accounts.signTransaction(transactionObject, accountPrivateKey);
+  const transactionReceipt = await web3.eth.sendSignedTransaction(signedTransaction.rawTransaction);
+  console.log('Transaction receipt:', transactionReceipt);
+}
+  async function endRound(offerId){
+    try{
+    const OfferId = offerId;
+    console.log("in endRound");
+    const roundResult  = await energyMarketContract.methods.endRound(OfferId).call()
+    console.log( roundResult.winningBidder, roundResult.producerAddress, roundResult.totalCost);
+    
+    const gasPrice = await web3.eth.getGasPrice();
+    const gasLimit = 300000;
+   
+    const nonce = await web3.eth.getTransactionCount(accountAddress);
+    const txParams = {
         nonce: Web3.utils.toHex(nonce),
         gasPrice: Web3.utils.toHex(gasPrice),
         gasLimit: Web3.utils.toHex(gasLimit),
         to: energyMarketContractAddress,
-        data: energyMarketContract.methods.createOffer(quantity, pricePerUnit,duration,durationUnit).encodeABI()
-      };
-  
-      // sign and send the transaction
-      const signedTx = await web3.eth.accounts.signTransaction(txParams, accountPrivateKey);
-      const receipt = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
-      socket.emit('sellenergy',true);
-      Initiate_auction(duration, durationUnit);
-  
-    } catch (error) {
-      console.error('Transaction failed:', error);
-      socket.emit('error', 'Error creating offer');
+        data: energyMarketContract.methods.endRound(offerId).encodeABI()
+    };
+    const signedTx = await web3.eth.accounts.signTransaction(txParams, accountPrivateKey);
+    const receipt = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
+
+    await sendTransaction(roundResult.winningBidder,roundResult.producerAddress,roundResult.totalCost);
+    
+    }catch (error) {
+      if (error instanceof Error) {
+        console.error(error.message);
+      }
       
     }
-  });
-  
-  
+  }
+
   // Select best bid for an offer
   socket.on('select-bid', async (data) => {
     try {
@@ -350,7 +421,8 @@ io.on('connection', (socket) => {
             seller: bids.buyer,
             quantity: bids.quantity,
             pricePerUnit: bids.pricePerUnit,
-            active: bids.active
+            active: bids.active,
+            status:bids.status
           });
         }
       }
@@ -430,6 +502,8 @@ io.on('connection', (socket) => {
   
   socket.on('Energy_balance', async () => {
     try {
+      accountAddress=accountAddress
+      accountPrivateKey=accountPrivateKey;
       const energyAmount = await energyMarketContract.methods.getEnergyBalance(accountAddress).call();
       socket.emit('showenergy',{ balance: energyAmount});
     } catch (error) {
@@ -463,281 +537,6 @@ io.on('connection', (socket) => {
   });
 });
 
-
-// app.post('/verify', bodyParser.json(), (req, res) => {
-//   const account = req.body.account;
-//   const key = req.body.key;
-
-//   // const result = verify(account, key);
-//   result=true;
-
-//   if (result) {
-//     res.status(200).send('Account verified');
-//   } else {
-//     res.status(400).send('Account verification failed');
-//   }
-// });
-
-
-// app.get('/', function (req, res) {
-//   res.sendFile('/home/sanket/Subjects/Btech_project/new_energy_market/login.html')
-// });
-
-// app.post('/checkOfferStatus', async (req, res) => {
-//   try {
-//     const offerId = req.body.offerId;
-//     const offer = await energyMarketContract.methods.offers(offerId).call();
-//     const active = offer.active;
-//     res.json({ active: active });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).send('Internal server error');
-//   }
-// });
-
-
-
-// app.get('/getwallet', async (req, res) => {
-//   try {
-//     const accountBalance = await web3.eth.getBalance(accountAddress);
-//     const x = web3.utils.fromWei(accountBalance, 'ether'); // Convert wei to ether and log the balance
-//     res.json({ balance: x, address: accountAddress });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).send('Internal server error');
-//   }
-// });
-  
-
-
-
-// app.get('/offers-list', async (req, res) => {
-//   try {
-//     // res.sendFile('/home/sanket/Subjects/Btech_project/new_energy_market/Marketplace.html');
-//     const offerCount = await energyMarketContract.methods.getOfferLength().call();
-//     const current_offers = [];
-//     // console.log(offerCount)
-//     // tableBody = document.getElementById("offers-table-body");
-//     // Loop through all the offers and push their details to the array
-//     for (let i = 0; i < offerCount; i++) {
-//       const offer = await energyMarketContract.methods.offers(i).call();
-//       current_offers.push({
-//         seller: offer.seller,
-//         quantity: offer.quantity,
-//         pricePerUnit: offer.pricePerUnit,
-//         duration: offer.duration,
-//         timestamp: offer.timestamp,
-//         offerId: offer.offerId,
-//         active: offer.active
-//       });
-   
-//     }
-  
-//     res.json(current_offers);
-//   } catch (error) {
-//     console.error('Error getting offer details:', error);
-//     res.status(500).send('Internal server error');
-//   }
-// });
-
-
-
-
-// async function Initiate_auction(duration,async) {
-//   try {
-//     const gasPrice = await web3.eth.getGasPrice();
-//     const gasLimit = 300000;
-
-//     const nonce = await web3.eth.getTransactionCount(accountAddress);
-//     const txParams = {
-//       nonce: Web3.utils.toHex(nonce),
-//       gasPrice: Web3.utils.toHex(gasPrice),
-//       gasLimit: Web3.utils.toHex(gasLimit),
-//       to: energyMarketContractAddress,
-//       data: energyMarketContract.methods.initiateAuction(duration).encodeABI()
-//     };
-
-//     // sign and send the transaction
-//     const signedTx = await web3.eth.accounts.signTransaction(txParams, accountPrivateKey);
-//     const receipt = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
-//     return receipt
-//   }
-//   catch (error) {
-//   console.error(error);
-//     return false;
-//   }
-// }
-
-// // Call the createOffer function using the contract instance
-// app.post('/offer-energy', async (req, res) => {
-//   try {
-//     const quantity = req.body.Quantity;  // the quantity of energy to sell
-//     const pricePerUnit = req.body.PricePerUnit;  // the price per unit of energy in wei
-//     const duration = req.body.Duration;  // the duration of the offer in seconds
-
-
-//     const gasPrice = await web3.eth.getGasPrice();
-//     const gasLimit = 300000;
-
-//     const nonce = await web3.eth.getTransactionCount(accountAddress);
-//     const txParams = {
-//       nonce: Web3.utils.toHex(nonce),
-//       gasPrice: Web3.utils.toHex(gasPrice),
-//       gasLimit: Web3.utils.toHex(gasLimit),
-//       to: energyMarketContractAddress,
-//       data: energyMarketContract.methods.createOffer(quantity, pricePerUnit,duration).encodeABI()
-//     };
-
-//     // sign and send the transaction
-//     const signedTx = await web3.eth.accounts.signTransaction(txParams, accountPrivateKey);
-//     const receipt = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
-//     res.send(`Offer created successfully.: ${receipt.transactionHash}`);
-//     receipt = Initiate_auction(duration);
-
-//   } catch (error) {
-//     console.error('Transaction failed:', error);
-//     res.status(500).send('Error creating offer.');
-//   }
-// });
-
-
-// // Select best bid for an offer
-// app.post('/select-bid', async (req, res) => {
-//   try {
-//     const offerId = req.body.offerId;
-
-//     const gasPrice = await web3.eth.getGasPrice();
-//     const gasLimit = 300000;
-
-//     const nonce = await web3.eth.getTransactionCount(accountAddress);
-//     const txParams = {
-//       nonce: Web3.utils.toHex(nonce),
-//       gasPrice: Web3.utils.toHex(gasPrice),
-//       gasLimit: Web3.utils.toHex(gasLimit),
-//       to: energyMarketContractAddress,
-//       data: energyMarketContract.methods.selectBid(offerId).encodeABI()
-//     };
-
-//     const signedTx = await web3.eth.accounts.signTransaction(txParams, accountPrivateKey);
-//     const receipt = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
-
-//     res.send(`Bid selected successfully: ${receipt.transactionHash}`);
-
-
-//   } catch (error) {
-//     console.error('Transaction failed:', error);
-//     res.status(500).send('Error selecting bid.');
-//   }
-// });
-
-// app.post('/place-bid', async (req, res) => {
-//   try {
-//     const offerId = req.body.offerId;
-//     const quantity = req.body.quantity;
-//     const pricePerUnit = req.body.pricePerUnit;
-//     const active = req.body.active;
-    
-
-//     const gasPrice = await web3.eth.getGasPrice();
-//     const gasLimit = 300000;
-
-//     const nonce = await web3.eth.getTransactionCount(accountAddress);
-//     const txParams = {
-//       nonce: Web3.utils.toHex(nonce),
-//       gasPrice: Web3.utils.toHex(gasPrice),
-//       gasLimit: Web3.utils.toHex(gasLimit),
-//       to: energyMarketContractAddress,
-//       data: energyMarketContract.methods.submitBid(offerId, quantity, pricePerUnit).encodeABI()
-//     };
-    
-//     const signedTx = await web3.eth.accounts.signTransaction(txParams, accountPrivateKey);
-//     const receipt = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
-
-//     res.send(`Bid placed successfully: ${receipt.transactionHash}`);
-//   } catch (error) {
-//     console.error('Transaction failed:', error);
-//     res.status(500).send('Error placing bid.');
-//   }
-// });
-
-
-// app.get('/getActiveBids', async (req, res) => {
-//   try {
-//     // res.sendFile('/home/sanket/Subjects/Btech_project/new_energy_market/Marketplace.html');
-//     const BidCount = await energyMarketContract.methods.getBidCount().call();
-   
-//     const current_Bids = [];
-
-//     for (let i = 0; i < BidCount; i++) {
-//       const BidArrayLen = await energyMarketContract.methods.getBidsArrayLength(i).call();
-//       for(let j = 0; j< BidArrayLen; j++){
-//         const bids = await energyMarketContract.methods.bids(i,j).call();
-//         current_Bids.push({
-//           offerId:i,
-//           seller: bids.buyer,
-//           quantity: bids.quantity,
-//           pricePerUnit: bids.pricePerUnit,
-//           active: bids.active
-//         });
-//       }
-//     }
-  
-//     res.json(current_Bids);
-//   } catch (error) {
-//     console.error('Error getting Bids details:', error);
-//     res.status(500).send('Internal server error');
-//   }
-// });
-
-// app.post('/update_balance', async(res,req)=>{
-//   try{
-//     const energyAmount = req.body.energyAmount;
-  
-//     const gasPrice = await web3.eth.getGasPrice();
-//     const gasLimit = 300000;
-
-//     const nonce = await web3.eth.getTransactionCount(accountAddress);
-//     const txParams = {
-//       nonce: Web3.utils.toHex(nonce),
-//       gasPrice: Web3.utils.toHex(gasPrice),
-//       gasLimit: Web3.utils.toHex(gasLimit),
-//       to: energyMarketContractAddress,
-//       data: energyMarketContract.methods.submitBid(energyAmount).encodeABI()
-//     };
-    
-//     const signedTx = await web3.eth.accounts.signTransaction(txParams, accountPrivateKey);
-//     const receipt = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
-
-
-//   }
-//   catch (error) {
-//     console.error('Transaction failed:', error);
-//     res.status(500).send('Error placing bid.');
-//   }
-
-// });
-
-// app.get('/Energy_balance', async (req, res) => {
-//   try {
-//     const energyAmount = await energyMarketContract.methods.getEnergyBalance(accountAddress).call();
-//     res.json({ balance: energyAmount});
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).send('Internal server error');
-//   }
-// });
-
-// app.get('/Eth_balance', async(req,res) => {
-//   try{
-
-//     const ethAmount = await energyMarketContract.methods.getEthBalance(accountAddress).call();
-//     res.json({balance: ethAmount});
-//   } catch(error){
-//     console.error(error);
-//     res.status(500).send('Internal server error');
-//   }
-
-// });
 
 
 http.listen(3000, () => {

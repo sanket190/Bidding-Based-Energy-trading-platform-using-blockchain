@@ -217,7 +217,11 @@ input {
     <script>
        const socket = io('http://localhost:3000');
        const sellForm = document.getElementById('sell-form');
-      
+      //  const params = new URLSearchParams(window.location.search);
+      //   const accountAddress = params.get('accountAddress');
+      //   console.log(accountAddress)
+      const accountAddress = localStorage.getItem('accountAddress');
+      console.log(accountAddress)
     
         sellForm.addEventListener('submit', async (event) => {
         event.preventDefault();
@@ -243,6 +247,7 @@ input {
         });
     
       });
+     
 
        
      

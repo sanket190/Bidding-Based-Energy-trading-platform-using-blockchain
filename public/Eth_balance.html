@@ -105,9 +105,13 @@
           <div class="card">
             <div class="card-body">
               <h5 class="card-title">Add ETH</h5>
-              <form id="add-energy">
+              <form id="add-eth">
                 <div class="form-group">
                   <label for="add-energy-amount">Amount:</label>
+                  <input type="number" class="form-control" id="add-energy-amount" placeholder="Enter amount">
+                </div>
+                <div class="form-group">
+                  <label for="eth-address">From Account Address :</label>
                   <input type="number" class="form-control" id="add-energy-amount" placeholder="Enter amount">
                 </div>
                 <button type="submit" class="btn btn-primary" id="add-energy-btn">Add ETH</button>
@@ -119,10 +123,14 @@
           <div class="card">
             <div class="card-body">
               <h5 class="card-title">Withdraw ETH</h5>
-              <form id="withdraw-energy">
+              <form id="withdraw-eth">
                 <div class="form-group">
                   <label for="withdraw-energy-amount">Amount:</label>
                   <input type="number" class="form-control" id="withdraw-energy-amount" placeholder="Enter amount">
+                </div>
+                <div class="form-group">
+                  <label for="eth-address">From Account Address :</label>
+                  <input type="number" class="form-control" id="add-energy-amount" placeholder="Enter amount">
                 </div>
                 <button type="submit" class="btn btn-primary" id="withdraw-energy-btn">Withdraw ETH</button>
               </form>
@@ -161,8 +169,8 @@
             })
             .catch(error => console.error(error));
 
-            const add_energy = document.querySelector('#add-energy');
-            const withdraw_energy = document.querySelector('#withdraw-energy');
+            const add_energy = document.querySelector('#add-eth');
+            const withdraw_energy = document.querySelector('#withdraw-eth');
 
             add_energy.addEventListener('submit', async (event) => {
                 event.preventDefault();

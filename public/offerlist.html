@@ -109,8 +109,8 @@
               <th>Seller</th>
               <th>Quantity</th>
               <th>Price per Unit</th>
-              <th>Duration</th>
-              <th>Timestamp</th>
+              <th>Duration(unit)</th>
+              <th>Timestamp(created)</th>
               <th>Active</th>
             </tr>
           </thead>
@@ -131,15 +131,20 @@
     <script>
     // Fetch the list of offers from the server
     const socket = io('http://localhost:3000');
+    // const params = new URLSearchParams(window.location.search);
+    // const accountAddress = params.get('accountAddress');
+    const accountAddress = localStorage.getItem('accountAddress');
+    console.log(accountAddress)
     socket.emit('get-offers');
     socket.on('error',(error)=>{
       alert(error);
     })
+   
 
     socket.on('offers-list', async (current_offers) =>{
       try {
           const tableBody = document.getElementById('offers-table-body');
-        
+          console.log(current_offers);
           // Remove any existing rows from the table body
           tableBody.innerHTML = '';
           
@@ -151,7 +156,7 @@
               <td>${offer.seller}</td>
               <td>${offer.quantity}</td>
               <td>${offer.pricePerUnit}</td>
-              <td>${offer.duration}</td>
+              <td> ${offer.duration}[${offer.durationUnit}]</td>
               <td>${new Date(offer.timestamp * 1000).toLocaleString()}</td>
               <td>${offer.active}</td>
             `;
@@ -165,6 +170,7 @@
      
       }
     });
+    
   // fetch('http://localhost:3000/offers-list')
   // .then(response => response.json())
   // .then(current_offers => {

@@ -308,6 +308,11 @@ input {
    
     <script>
       const socket = io('http://localhost:3000');
+      // const params = new URLSearchParams(window.location.search);
+      // const accountAddress = params.get('accountAddress');
+      const accountAddress = localStorage.getItem('accountAddress');
+    // console.log(accountAddress)
+      console.log(accountAddress)
       const bidForm = document.getElementById('bid-form');
     
       bidForm.addEventListener('submit', async (event) => {

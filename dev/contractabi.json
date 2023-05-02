@@ -67,7 +67,7 @@
 		"name": "bids",
 		"outputs": [
 			{
-				"internalType": "address",
+				"internalType": "address payable",
 				"name": "buyer",
 				"type": "address"
 			},
@@ -85,6 +85,11 @@
 				"internalType": "bool",
 				"name": "active",
 				"type": "bool"
+			},
+			{
+				"internalType": "string",
+				"name": "status",
+				"type": "string"
 			}
 		],
 		"stateMutability": "view",
@@ -101,10 +106,26 @@
 				"internalType": "uint256",
 				"name": "_pricePerUnit",
 				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_duration",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "_durationUnit",
+				"type": "string"
 			}
 		],
 		"name": "createOffer",
-		"outputs": [],
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
@@ -136,19 +157,6 @@
 	},
 	{
 		"inputs": [],
-		"name": "currentRound",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
 		"name": "currentSupply",
 		"outputs": [
 			{
@@ -161,9 +169,57 @@
 		"type": "function"
 	},
 	{
-		"inputs": [],
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "endDuration",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "offerId",
+				"type": "uint256"
+			}
+		],
 		"name": "endRound",
-		"outputs": [],
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "address",
+						"name": "winningBidder",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "producerAddress",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "totalCost",
+						"type": "uint256"
+					}
+				],
+				"internalType": "struct EnergyMarket.RoundResult",
+				"name": "",
+				"type": "tuple"
+			}
+		],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
@@ -184,19 +240,6 @@
 			}
 		],
 		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "round",
-				"type": "uint256"
-			}
-		],
-		"name": "externalEndRound",
-		"outputs": [],
-		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -273,7 +316,7 @@
 		"inputs": [
 			{
 				"internalType": "uint256",
-				"name": "round",
+				"name": "offerId",
 				"type": "uint256"
 			}
 		],
@@ -305,7 +348,7 @@
 		"inputs": [
 			{
 				"internalType": "uint256",
-				"name": "round",
+				"name": "offerId",
 				"type": "uint256"
 			},
 			{
@@ -322,7 +365,7 @@
 				"type": "address"
 			}
 		],
-		"stateMutability": "view",
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -342,7 +385,12 @@
 		"inputs": [
 			{
 				"internalType": "uint256",
-				"name": "_biddingDuration",
+				"name": "offerId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "durationInSeconds",
 				"type": "uint256"
 			}
 		],
@@ -400,6 +448,16 @@
 				"type": "uint256"
 			},
 			{
+				"internalType": "uint256",
+				"name": "duration",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "durationUnit",
+				"type": "string"
+			},
+			{
 				"internalType": "bool",
 				"name": "active",
 				"type": "bool"
@@ -432,16 +490,16 @@
 		"type": "function"
 	},
 	{
-		"inputs": [],
-		"name": "totalRounds",
-		"outputs": [
+		"inputs": [
 			{
 				"internalType": "uint256",
-				"name": "",
+				"name": "energyAmount",
 				"type": "uint256"
 			}
 		],
-		"stateMutability": "view",
+		"name": "updateEnergyBalance",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -452,7 +510,7 @@
 				"type": "uint256"
 			}
 		],
-		"name": "updateEnergyBalance",
+		"name": "withdrawEnergyBalance",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"

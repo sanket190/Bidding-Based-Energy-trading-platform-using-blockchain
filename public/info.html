@@ -215,6 +215,12 @@
 
         // console.log("hi")
         const socket = io('http://localhost:3000');
+        // const socket = io();
+        // const params = new URLSearchParams(window.location.search);
+        // const accountAddress = params.get('accountAddress');
+        // console.log(accountAddress)
+        const accountAddress = localStorage.getItem('accountAddress');
+        console.log(accountAddress)
         
         socket.on('error', (error) => {
           alert(error.message); 

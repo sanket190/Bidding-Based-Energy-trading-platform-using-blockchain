@@ -184,8 +184,8 @@
       const submitButton = document.querySelector('#reg');
       const form = document.getElementById('myForm');
       var flag = 0;
-      const socket = io('http://localhost:3000');
-      
+      const socket = io('http://localhost:3000'); 
+     
       submitButton.addEventListener('click', async (event) => {
         event.preventDefault();
         const Name = document.querySelector('#name').value;
@@ -193,15 +193,22 @@
         const phone = document.querySelector('#phone').value;
         const accountAddress = document.querySelector('#account').value;
         const Privatekey = document.querySelector('#privatekey').value;
+        localStorage.setItem('accountAddress', String(accountAddress));
+    
         socket.emit('register', {Name, Email,phone, accountAddress, Privatekey});
+
+       
         socket.on('error', (error) => {
           alert(error); 
         });
         socket.on('error-reg', (error) => {
           alert(error.message); 
         });
-     
-        socket.on('registrationSuccessful', (response) => {
+
+      //  const url = `../public/Marketplace.html?accountAddress=${encodeURIComponent(accountAddress)}&accountPrivatekey=${encodeURIComponent(Privatekey)}`;
+      //  window.location.href = url;
+
+       socket.on('registrationSuccessful', (response) => {
           
           if (response) {
             // Perform the action of form

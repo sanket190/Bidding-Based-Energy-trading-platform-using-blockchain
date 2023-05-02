@@ -120,6 +120,7 @@
                   <th scope="col">Price per Unit</th>
                   <th scope="col">Active</th>
                   <th scope="col">Bidder</th>
+                  <th scope="col">Bid Status</th>
                 </tr>
               </thead>
               <tbody id="Bids-table-body">
@@ -138,11 +139,17 @@
       <script>
         // Function to get all active energy offers and display them in the table
         const socket = io('http://localhost:3000');
+        // const params = new URLSearchParams(window.location.search);
+        // const accountAddress = params.get('accountAddress');
+        // console.log(accountAddress)
+        const accountAddress = localStorage.getItem('accountAddress');
+        console.log(accountAddress)
         socket.emit('getActiveBids');
         socket.on('error',(error)=>{
           alert(error);
         })
-      socket.on('offers-list', async (current_bids) =>{
+       
+      socket.on('Bids', async (current_bids) =>{
       try {
           // Find the table body element
           const tableBody = document.getElementById('Bids-table-body');
@@ -159,6 +166,7 @@
             <td>${bid.pricePerUnit}</td>
             <td>${bid.active}</td>
             <td>${bid.seller}</td>
+            <td>${bid.status}</td>
           `;
           // Add the row to the table body
           tableBody.appendChild(tableRow);

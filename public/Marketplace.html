@@ -181,7 +181,14 @@
     
       // establish socket connection
       const socket = io('http://localhost:3000');
-
+      // const socket = io();
+      // const params = new URLSearchParams(window.location.search);
+      // const accountAddress = params.get('accountAddress');
+      // const accountPrivatekey = params.get('Privatekey');
+      // console.log(accountAddress,accountPrivatekey);
+      const accountAddress = localStorage.getItem('accountAddress');
+      console.log(accountAddress)
+      
       socket.emit('Energy_balance');
 
       socket.on('showenergy', async (data) => {
