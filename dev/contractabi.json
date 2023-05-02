@@ -1,5 +1,166 @@
 [
 	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_quantity",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_pricePerUnit",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_duration",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "_durationUnit",
+				"type": "string"
+			}
+		],
+		"name": "createOffer",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "offerId",
+				"type": "uint256"
+			}
+		],
+		"name": "endRound",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "address",
+						"name": "winningBidder",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "producerAddress",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "totalCost",
+						"type": "uint256"
+					}
+				],
+				"internalType": "struct EnergyMarket.RoundResult",
+				"name": "",
+				"type": "tuple"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "offerId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "highestBidPrice",
+				"type": "uint256"
+			}
+		],
+		"name": "getWinningBidder",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "offerId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "durationInSeconds",
+				"type": "uint256"
+			}
+		],
+		"name": "initiateAuction",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_offerId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_quantity",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_pricePerUnit",
+				"type": "uint256"
+			}
+		],
+		"name": "submitBid",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "energyAmount",
+				"type": "uint256"
+			}
+		],
+		"name": "updateEnergyBalance",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "energyAmount",
+				"type": "uint256"
+			}
+		],
+		"name": "withdrawEnergyBalance",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
 		"inputs": [],
 		"name": "bidCount",
 		"outputs": [
@@ -96,40 +257,6 @@
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_quantity",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_pricePerUnit",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_duration",
-				"type": "uint256"
-			},
-			{
-				"internalType": "string",
-				"name": "_durationUnit",
-				"type": "string"
-			}
-		],
-		"name": "createOffer",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"inputs": [],
 		"name": "currentDemand",
 		"outputs": [
@@ -185,42 +312,6 @@
 			}
 		],
 		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "offerId",
-				"type": "uint256"
-			}
-		],
-		"name": "endRound",
-		"outputs": [
-			{
-				"components": [
-					{
-						"internalType": "address",
-						"name": "winningBidder",
-						"type": "address"
-					},
-					{
-						"internalType": "address",
-						"name": "producerAddress",
-						"type": "address"
-					},
-					{
-						"internalType": "uint256",
-						"name": "totalCost",
-						"type": "uint256"
-					}
-				],
-				"internalType": "struct EnergyMarket.RoundResult",
-				"name": "",
-				"type": "tuple"
-			}
-		],
-		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -345,30 +436,6 @@
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "offerId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "highestBidPrice",
-				"type": "uint256"
-			}
-		],
-		"name": "getWinningBidder",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"inputs": [],
 		"name": "initialBiddingPrice",
 		"outputs": [
@@ -379,24 +446,6 @@
 			}
 		],
 		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "offerId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "durationInSeconds",
-				"type": "uint256"
-			}
-		],
-		"name": "initiateAuction",
-		"outputs": [],
-		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -464,55 +513,6 @@
 			}
 		],
 		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_offerId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_quantity",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_pricePerUnit",
-				"type": "uint256"
-			}
-		],
-		"name": "submitBid",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "energyAmount",
-				"type": "uint256"
-			}
-		],
-		"name": "updateEnergyBalance",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "energyAmount",
-				"type": "uint256"
-			}
-		],
-		"name": "withdrawEnergyBalance",
-		"outputs": [],
-		"stateMutability": "nonpayable",
 		"type": "function"
 	}
 ]

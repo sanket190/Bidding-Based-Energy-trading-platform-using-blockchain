@@ -41,9 +41,36 @@
 //     console.error(error);
 //     res.status(500).send('Internal server error');
 //   }
-// });
+// // });
   
+// socket.on('select-bid', async (data) => {
+//   try {
+//     const offerId = data.offerId;
 
+//     const gasPrice = await web3.eth.getGasPrice();
+//     const gasLimit = 300000;
+
+//     const nonce = await web3.eth.getTransactionCount(accountAddress);
+//     const txParams = {
+//       nonce: Web3.utils.toHex(nonce),
+//       gasPrice: Web3.utils.toHex(gasPrice),
+//       gasLimit: Web3.utils.toHex(gasLimit),
+//       to: energyMarketContractAddress,
+//       data: energyMarketContract.methods.selectBid(offerId).encodeABI()
+//     };
+
+//     const signedTx = await web3.eth.accounts.signTransaction(txParams, accountPrivateKey);
+//     const receipt = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
+
+//     res.send(`Bid selected successfully: ${receipt.transactionHash}`);
+
+
+//   } catch (error) {
+//     console.error('Transaction failed:', error);
+//     socket.emit('error', 'Error selecting bid.');
+//     // res.status(500).send('Error selecting bid.');
+//   }
+// });
 
 
 // app.get('/offers-list', async (req, res) => {

@@ -206,45 +206,44 @@ input {
 
       </style>
        <nav class="navbar navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
-           <div class="container-fluid">
-             
-             <a class="navbar-brand" href="#">
-               <img src="../images/blockchain_log.png" alt="logo" width="50" height="34">
-             </a>    
-             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-               <span class="navbar-toggler-icon"></span>
-             </button>
-             <div class="collapse navbar-collapse" id="navbarSupportedContent">
-               <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                 <li class="nav-item">
-                   <a class="nav-link active" aria-current="page" href="./Marketplace.html">Home</a>
-                 </li>
-                 <li class="nav-item">
-                   <a class="nav-link active"  href="./info.html">Info</a>
-                    
-                 </li>
-                 <li class="nav-item dropdown">
-                   <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                     Wallets
-                   </a>
-                   <ul class="dropdown-menu">
-                    
-                     
-                     <li><a class="dropdown-item" href="./Energy_balance.html">Energy Wallet</a></li>
-                     <li><a class="dropdown-item" href="./Eth_balance.html">Eth wallet</a></li>
-                   </ul>
-                 </li>
-                 <li class="nav-item">
-                   <a class="nav-link active ">Contact us</a>
-                 </li>
-               </ul>
-               <form class="d-flex" role="search">
-                 <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                 <button class="btn btn-outline-success" type="submit">Search</button>
-               </form>
-             </div>
-           </div> 
-         
+        <div class="container-fluid">
+            
+          <a class="navbar-brand" href="#">
+            <img src="../images/blockchain_log.png" alt="logo" width="50" height="34">
+          </a>    
+          
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+            
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="./Marketplace.html">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active"  href="./info.html">Info</a>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Wallets
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="./Energy_balance.html">Energy Wallet</a></li>
+                  <li><a class="dropdown-item" href="./Eth_balance.html">Eth wallet</a></li>
+                </ul>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active ">Contact us</a>
+              </li>
+            </ul>
+              
+            <div class="d-flex">
+              <button class="btn btn-outline-secondary" id="logout-btn" type="button">Logout</button>
+            </div>
+              
+          </div>
+        </div> 
       </nav>
       <div class="col-md-6 offset-md-3">
         <h2 class="text-center ">Placed Bid</h2>
@@ -310,9 +309,9 @@ input {
       const socket = io('http://localhost:3000');
       // const params = new URLSearchParams(window.location.search);
       // const accountAddress = params.get('accountAddress');
-      const accountAddress = localStorage.getItem('accountAddress');
-    // console.log(accountAddress)
-      console.log(accountAddress)
+    //   const accountAddress = localStorage.getItem('accountAddress');
+    // // console.log(accountAddress)
+    //   console.log(accountAddress)
       const bidForm = document.getElementById('bid-form');
     
       bidForm.addEventListener('submit', async (event) => {
@@ -339,63 +338,36 @@ input {
          
         }
         });
-       
+        const logoutBtn = document.querySelector('#logout-btn');
       
+      // add a click event listener to the logout button
+       logoutBtn.addEventListener('click', () => {
+          
+          window.location.href = './login.html';
+       });
+       socket.on('logout',()=>{
+        window.location.href = './login.html';
+     })
     
       });
-    </script>
-    <script>// jQuery code to handle form submission and display loading spinner
-      // $(document).ready(function() {
-      //   $('#checkOfferBtn').click(function() {
-      //     var offerId = $('#offerIdInput').val();
-          
-      //     if (offerId) {
-      //       // Display loading spinner animation
-      //       $('#spinner').removeClass('d-none');
-            
-      //       // Send AJAX request to server to check offer status
-      //       $.ajax({
-      //         url: 'http://localhost:3000/checkOfferStatus',
-      //         type: 'POST',
-      //         data: { offerId: offerId },
-      //         success: function(response) {
-      //           if (response.active) {
-      //             // Offer is active, proceed with placing bid
-      //             alert('Offer is currently active');
-      //           } else {
-      //             // Offer is inactive, display error message
-      //             alert('Offer is currently inactive');
-      //           }
-      //         },
-      //         error: function(error) {
-      //           console.log(error);
-      //           alert('Error checking offer status');
-      //         },
-      //         complete: function() {
-      //           // Hide loading spinner animation
-      //           $('#spinner').addClass('d-none');
-      //         }
-      //       });
-      //     } else {
-      //       alert('Please enter an Offer ID');
-      //     }
-      //   });
-      // });
-      $(document).ready(function() {
-      const socket = io('http://localhost:3000');
+   
 
-      $('#checkOfferBtn').click(function() {
-        var offerId = $('#offerIdInput').val();
+      const checkOfferBtn = document.getElementById("checkOfferBtn");
+      const spinner = document.getElementById("spinner");
+
+      checkOfferBtn.addEventListener("click", function() {
+        var offerId = document.getElementById("offerIdInput").value;
+        
 
         if (offerId) {
           // Display loading spinner animation
-          $('#spinner').removeClass('d-none');
-
+        
           // Send Socket.io request to server to check offer status
           socket.emit('checkOfferStatus', offerId);
 
           // Listen for server response
           socket.on('offerStatus', function(response) {
+            console.log(response)
             if (response.active) {
               // Offer is active, proceed with placing bid
               alert('Offer is currently active');
@@ -405,13 +377,13 @@ input {
             }
 
             // Hide loading spinner animation
-            $('#spinner').addClass('d-none');
+            
           });
         } else {
           alert('Please enter an Offer ID');
         }
       });
-    });
+
 
       </script>
 

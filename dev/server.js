@@ -18,7 +18,7 @@ app.get('/', (req, res) => {
 
 
 
-const energyMarketContractAddress = '0xDa08F378EA5f1eC711cA9D679F1e9b8a707d1295'; // Replace with the actual contract address
+const energyMarketContractAddress = '0x78D74De1a6E4308Ec2970D1650C8E07FBd65b265'; // Replace with the actual contract address
 const contractAbi = require('./contractabi.json');
 const { off } = require('process');
 const energyMarketContract = new web3.eth.Contract(contractAbi, energyMarketContractAddress);
@@ -31,10 +31,9 @@ var accountPrivateKey;
 var Name;
 var email;
 var phone;
-// var offerId;
-// var Password;
+
 const users = {};
-// const users = [];
+const transactions = {};
 
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -77,13 +76,12 @@ io.on('connection', (socket) => {
        
         web3.eth.accounts.wallet.add(key);
         web3.eth.defaultAccount = account;
-        accountAddress = account;
-        accountPrivateKey = key;
+       
 
           return true;
         } catch (error) {
           console.error(error);
-          socket.emit('error', error)
+          socket.emit('error', error.message)
           return false;
         }
   }
@@ -100,14 +98,12 @@ io.on('connection', (socket) => {
       const AccountAddress = String(data.accountAddress);
       const PrivateKey = String(data.Privatekey);
       const Phone = data.phone;
-     
-
-      const result = verify(AccountAddress, PrivateKey);
       
      if (AccountAddress in users){
       socket.emit("error-reg",{message:'Account is already registered'});
      }
      else{
+      const result = verify(AccountAddress, PrivateKey);
         users[AccountAddress] = {
           "name": name,
           "email":Email,
@@ -128,37 +124,47 @@ io.on('connection', (socket) => {
 
     // Login event handler
   socket.on('login',async (data) => {
-      // Check if user exists in users object
-      // console.log(users);
-      account=String(data.account);
-      key= String(data.key);
-      // console.log(users[account].privateKey);
-
-      if (account in users && users[account].privateKey == key) {
-        // Emit a 'login successful' event to the client
-        accountAddress=account,
-        accountPrivateKey=key,
-        
-        socket.emit('loginSuccessful',true);
-      } else {
-        // Emit a 'login failed' event to the client
-        socket.emit('error', { message: 'You have not registered yet' });
+      try {
+        account = String(data.account);
+        key = String(data.key);
+        // console.log(users[account].privateKey);
+        const result = verify(account, key);
+      
+        if (account in users && users[account].privateKey == key) {
+          // Emit a 'login successful' event to the client
+          accountAddress = account;
+          accountPrivateKey = key;
+      
+          socket.emit('loginSuccessful', true);
+        } else {
+          // Emit a 'login failed' event to the client
+          socket.emit('error-log', { message: 'You have not registered yet' });
+        }
+      } catch (err) {
+        console.error(err);
+        // Emit an error event to the client
+        socket.emit('error-log', { message: 'An error occurred during login' });
       }
-    const account = String(data.account);
-    const key = String(data.key);
-    });
+});
 
 
 
 
   socket.on('getInfo', async () => {
-    try {
-      
+  
       // console.log(accountAddress,accountPrivateKey);
-      const accountBalance = await web3.eth.getBalance(accountAddress);
-      const x = web3.utils.fromWei(accountBalance, 'ether'); // Convert wei to ether and log the balance
-      socket.emit('Info', { name:users[accountAddress].name, email: users[accountAddress].email, balance: x, phone: users[accountAddress].phone, address: accountAddress });
-    } catch (error) {
+      try {
+          if (!accountAddress || !accountPrivateKey) {
+            // Emit "logout" event
+            socket.emit("logout");
+          }
+          else{
+            const accountBalance = await web3.eth.getBalance(accountAddress);
+            const x = web3.utils.fromWei(accountBalance, 'ether'); // Convert wei to ether and log the balance
+            socket.emit('Info', { name:users[accountAddress].name, email: users[accountAddress].email, balance: x, phone: users[accountAddress].phone, address: accountAddress });
+      
+          }
+      } catch (error) {
       console.error(error);
       socket.emit('error', { message: 'Internal server error' });
     }
@@ -207,6 +213,12 @@ io.on('connection', (socket) => {
   });
   async function Initiate_auction(duration_gap,offerId) {
     try {
+      if (!accountAddress || !accountPrivateKey) {
+        // Emit "logout" event
+        socket.emit("logout");
+      }
+      else{
+      
       const gasPrice = await web3.eth.getGasPrice();
       const gasLimit = 300000;
 
@@ -223,6 +235,7 @@ io.on('connection', (socket) => {
       const signedTx = await web3.eth.accounts.signTransaction(txParams, accountPrivateKey);
       const receipt = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
       return receipt
+      }
     }
     catch (error) {
     console.error(error);
@@ -239,6 +252,11 @@ io.on('connection', (socket) => {
  
   socket.on('offer-energy', async (data) => {
     try {
+      if (!accountAddress || !accountPrivateKey) {
+        // Emit "logout" event
+        socket.emit("logout");
+      }
+      else{
         const quantity = data.Quantity; 
         const pricePerUnit = data.PricePerUnit; 
         const duration = data.Duration; 
@@ -259,18 +277,20 @@ io.on('connection', (socket) => {
         const receipt = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
 
        
-        console.log(offerId,duration,durationUnit);
+        // console.log(offerId,duration,durationUnit);
        
         socket.emit('sellenergy', true);
        
         var duration_gap = 1000* duration * convertToSeconds(durationUnit);
-        Initiate_auction(duration_gap, offerId);
-        console.log(duration_gap);
+        var time = duration * convertToSeconds(durationUnit)
+        Initiate_auction(time, offerId);
+        console.log(time);
         
         setTimeout(() => {
           endRound(offerId);      
         }, duration_gap);
         // console.log(duration_gap);
+      }
 
     } catch (error) {
         console.error('Transaction failed:', error);
@@ -294,6 +314,25 @@ io.on('connection', (socket) => {
   }
 
 // Send the transaction
+
+socket.on('getTransactionHistory', async()=>{
+  try{
+    if (!accountAddress || !accountPrivateKey) {
+      // Emit "logout" event
+      socket.emit("logout");
+    }
+    else{
+      if (transactions.hasOwnProperty(accountAddress)) {
+        console.log("no transction history is exist");
+      } else {
+        socket.emit('transactionHistory',transactions[accountAddress]);
+      }
+    }
+  }
+  catch(error){
+    socket.emit(error);
+  }
+});
 async function sendTransaction(senderAddress,recipientAddress,totalCost) {
   const ethAmount = String(totalCost);
   const weiAmount = web3.utils.toWei(ethAmount, 'ether');
@@ -311,70 +350,66 @@ async function sendTransaction(senderAddress,recipientAddress,totalCost) {
   const signedTransaction = await web3.eth.accounts.signTransaction(transactionObject, accountPrivateKey);
   const transactionReceipt = await web3.eth.sendSignedTransaction(signedTransaction.rawTransaction);
   console.log('Transaction receipt:', transactionReceipt);
+  const currentDate = new Date();
+  transactions[senderAddress]={
+    date : currentDate.toLocaleDateString(),
+    type : "withdraw",
+    sender : senderAddress,
+    recipient : recipientAddress,
+    amount : totalCost
+  }
+  transactions[recipientAddress]={
+    date : currentDate.toLocaleDateString(),
+    type : "deposit",
+    sender : recipientAddress,
+    recipient : senderAddress,
+    amount : totalCost
+  }
+  
 }
   async function endRound(offerId){
     try{
-    const OfferId = offerId;
-    console.log("in endRound");
-    const roundResult  = await energyMarketContract.methods.endRound(OfferId).call()
-    console.log( roundResult.winningBidder, roundResult.producerAddress, roundResult.totalCost);
-    
-    const gasPrice = await web3.eth.getGasPrice();
-    const gasLimit = 300000;
-   
-    const nonce = await web3.eth.getTransactionCount(accountAddress);
-    const txParams = {
-        nonce: Web3.utils.toHex(nonce),
-        gasPrice: Web3.utils.toHex(gasPrice),
-        gasLimit: Web3.utils.toHex(gasLimit),
-        to: energyMarketContractAddress,
-        data: energyMarketContract.methods.endRound(offerId).encodeABI()
-    };
-    const signedTx = await web3.eth.accounts.signTransaction(txParams, accountPrivateKey);
-    const receipt = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
-
-    await sendTransaction(roundResult.winningBidder,roundResult.producerAddress,roundResult.totalCost);
-    
-    }catch (error) {
-      if (error instanceof Error) {
-        console.error(error.message);
+      if (!accountAddress || !accountPrivateKey) {
+        // Emit "logout" event
+        socket.emit("logout");
       }
+      else{
+        const OfferId = offerId;
+        console.log("in endRound");
+        const roundResult  = await energyMarketContract.methods.endRound(OfferId).call()
+        console.log( roundResult.winningBidder, roundResult.producerAddress, roundResult.totalCost);
+        
+        const gasPrice = await web3.eth.getGasPrice();
+        const gasLimit = 300000;
       
+        const nonce = await web3.eth.getTransactionCount(accountAddress);
+        const txParams = {
+            nonce: Web3.utils.toHex(nonce),
+            gasPrice: Web3.utils.toHex(gasPrice),
+            gasLimit: Web3.utils.toHex(gasLimit),
+            to: energyMarketContractAddress,
+            data: energyMarketContract.methods.endRound(offerId).encodeABI()
+        };
+        const signedTx = await web3.eth.accounts.signTransaction(txParams, accountPrivateKey);
+        const receipt = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
+
+        await sendTransaction(roundResult.winningBidder,roundResult.producerAddress,roundResult.totalCost);
+      }
+    }catch (error) {
+     console.log(error); 
     }
   }
 
-  // Select best bid for an offer
-  socket.on('select-bid', async (data) => {
-    try {
-      const offerId = data.offerId;
   
-      const gasPrice = await web3.eth.getGasPrice();
-      const gasLimit = 300000;
-  
-      const nonce = await web3.eth.getTransactionCount(accountAddress);
-      const txParams = {
-        nonce: Web3.utils.toHex(nonce),
-        gasPrice: Web3.utils.toHex(gasPrice),
-        gasLimit: Web3.utils.toHex(gasLimit),
-        to: energyMarketContractAddress,
-        data: energyMarketContract.methods.selectBid(offerId).encodeABI()
-      };
-  
-      const signedTx = await web3.eth.accounts.signTransaction(txParams, accountPrivateKey);
-      const receipt = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
-  
-      res.send(`Bid selected successfully: ${receipt.transactionHash}`);
-  
-  
-    } catch (error) {
-      console.error('Transaction failed:', error);
-      socket.emit('error', 'Error selecting bid.');
-      // res.status(500).send('Error selecting bid.');
-    }
-  });
   
   socket.on('place-bid', async (data) => {
     try {
+
+      if (!accountAddress || !accountPrivateKey) {
+        // Emit "logout" event
+        socket.emit("logout");
+      }
+      else{
       const offerId = data.offerId;
       const quantity = data.quantity;
       const pricePerUnit = data.pricePerUnit;
@@ -398,6 +433,7 @@ async function sendTransaction(senderAddress,recipientAddress,totalCost) {
   
       // res.send(`Bid placed successfully: ${receipt.transactionHash}`);
       socket.emit('bidplaced',true)
+    }
     } catch (error) {
       console.error('Transaction failed:', error);
       socket.emit('error','Error placing bid.');
@@ -436,9 +472,15 @@ async function sendTransaction(senderAddress,recipientAddress,totalCost) {
 
   socket.on('getwallet', async () => {
   try {
+    if (!accountAddress || !accountPrivateKey) {
+      // Emit "logout" event
+      socket.emit("logout");
+    }
+    else{
     const accountBalance = await web3.eth.getBalance(accountAddress);
     const x = web3.utils.fromWei(accountBalance, 'ether'); // Convert wei to ether and log the balance
     socket.emit('showbalance',{ balance: x, address: accountAddress });
+    }
   } catch (error) {
     console.error(error);
     res.status(500).send('Internal server error');
@@ -447,6 +489,11 @@ async function sendTransaction(senderAddress,recipientAddress,totalCost) {
   
   socket.on('update_balance', async(data)=>{
     try{
+      if (!accountAddress || !accountPrivateKey) {
+        // Emit "logout" event
+        socket.emit("logout");
+      }
+      else{
       
       const energyAmount = data.energyAmount;
     
@@ -465,6 +512,7 @@ async function sendTransaction(senderAddress,recipientAddress,totalCost) {
       const signedTx = await web3.eth.accounts.signTransaction(txParams, accountPrivateKey);
       const receipt = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
       socket.emit('update',true);
+      }
     }
     catch (error) {
       console.error('Transaction failed:', error);
@@ -474,7 +522,11 @@ async function sendTransaction(senderAddress,recipientAddress,totalCost) {
   });
   socket.on('withdraw_balance', async(data)=>{
     try{
-      
+      if (!accountAddress || !accountPrivateKey) {
+        // Emit "logout" event
+        socket.emit("logout");
+      }
+      else{
       const energyAmount = data.energyAmount;
     
       const gasPrice = await web3.eth.getGasPrice();
@@ -492,6 +544,7 @@ async function sendTransaction(senderAddress,recipientAddress,totalCost) {
       const signedTx = await web3.eth.accounts.signTransaction(txParams, accountPrivateKey);
       const receipt = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
       socket.emit('withdraw',true);
+      }
     }
     catch (error) {
       console.error('Transaction failed:', error);
@@ -502,34 +555,21 @@ async function sendTransaction(senderAddress,recipientAddress,totalCost) {
   
   socket.on('Energy_balance', async () => {
     try {
-      accountAddress=accountAddress
-      accountPrivateKey=accountPrivateKey;
-      const energyAmount = await energyMarketContract.methods.getEnergyBalance(accountAddress).call();
-      socket.emit('showenergy',{ balance: energyAmount});
+      if (!accountAddress || !accountPrivateKey) {
+        // Emit "logout" event
+        socket.emit("logout");
+      }
+      else{
+        const energyAmount = await energyMarketContract.methods.getEnergyBalance(accountAddress).call();
+        socket.emit('showenergy',{ balance: energyAmount});
+      }
+     
     } catch (error) {
       console.error(error);
       socket.emit('error', 'Internal server error');
     }
   });
 
-  socket.on('fetchEnergyBalance', () => {
-    fetchEnergyBalance()
-      .then((data) => {
-        socket.emit('energyBalance', data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  });
-  async function fetchEnergyBalance() {
-    try {
-      const availableEnergyBalance = await energyMarketContract.methods.getEnergyBalance(accountAddress).call();
-      return { availableEnergyBalance };
-    } catch (error) {
-      console.error('Error fetching energy balance:', error);
-      return { availableEnergyBalance: 0 };
-    }
-  }
   
 
   socket.on('disconnect', () => {

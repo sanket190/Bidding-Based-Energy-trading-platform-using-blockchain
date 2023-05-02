@@ -55,7 +55,41 @@
      }
      
      }
-        </style>
+     
+     .registration-link  {
+    display: inline-block;
+    padding: 10px 30px;
+    background-color: #e9ecef;
+    color: #191a18;
+    text-decoration: none;
+    border-radius: 30px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    font-size: 16px;
+   }
+  
+  
+  .registration-link:hover {
+    background-color: #212529;
+    color: #fff;
+  }
+  #sub {
+    display: inline-block;
+    padding: 10px 30px;
+    background-color: #e9ecef;
+    color: #292821;
+    text-decoration: none;
+    border-radius: 30px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    font-size: 16px;
+    
+  }
+  #sub:hover {
+    background-color: #0e78e2;
+    color: #fff;
+  }
+  </style>
          <nav class="navbar navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
              <div class="container-fluid">
                
@@ -101,7 +135,7 @@
             <div class="row">
               <div class="col-md-6 offset-md-3 mt-5">
                 <h2 class="text-center mb-4">Energy Trading Platform</h2>
-                <div class="card">
+                <div class="card shadow">
                   <div class="card-body">
                     <form id="myForm" action="../public/Marketplace.html" method="GET">
                       <div class="form-group">
@@ -113,17 +147,19 @@
                         <input type="password" class="form-control" id="privatekey" name="PrivateKey" required>
                       </div>
                       <div class="form-group text-center">
-                        <button type="submit" class="btn btn-primary" id="sub" >Login</button>
+                        <button type="submit" class="btn btn-primary btn-lg rounded-pill" id="sub">Login</button>
                       </div>
                     </form>
-                    <div class="text-center">
-                      <a href="../public/registration.html">Not registered yet? Click here to register</a>
+                    <div class="text-center mt-3">
+                      <a href="../public/registration.html" class="registration-link">Sign up now</a>
                     </div>
+                    
                   </div>
                 </div>
               </div>
             </div>
           </div>
+          
           
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/js/bootstrap.min.js" integrity="sha384-heAjqF+bCxXpCWLa6Zhcp4fu20XoNIA98ecBC1YkdXhszjoejr5y9Q77hIrv8R9i" crossorigin="anonymous"></script>
@@ -144,12 +180,16 @@
         event.preventDefault();
         const account = document.querySelector('#account').value;
         const key = document.querySelector('#privatekey').value;
-        const url = `../public/Marketplace.html?accountAddress=${encodeURIComponent(account)}`;
-        window.location.href = url;
-        
+       
         socket.emit('login', { account, key });
+        socket.on('error-log', (error) => {
+          alert(error.message);
+          location.reload(); // Reload the page on error 
+
+        });
         socket.on('error', (error) => {
-          alert(error.message); 
+          alert(error); 
+          location.reload(); // Reload the page on error
         });
        
         socket.on('loginSuccessful', (response) => {

@@ -123,10 +123,9 @@
                 <a class="nav-link active ">Contact us</a>
               </li>
             </ul>
-            <form class="d-flex" role="search">
-              <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-              <button class="btn btn-outline-success" type="submit">Search</button>
-            </form>
+            <div class="d-flex">
+              <button class="btn btn-outline-secondary" id="logout-btn" type="button">Logout</button>
+            </div>
           </div>
         </div> 
       </nav> 
@@ -151,7 +150,12 @@
                     </div>
                     <div class="form-group">
                       <label for="phone">Mobile Number </label>
-                      <input type="number" class="form-control" id="phone" name="phone" required>
+                      <input type="tel" class="form-control" id="phone" name="phone" required
+                        pattern="^[0-9]{10}$" 
+                        title="Please enter a valid 10-digit mobile number.">
+                      <div class="invalid-feedback">
+                        Please enter a valid 10-digit mobile number.
+                      </div>
                     </div>
                     <div class="form-group">
                       <label for="account">Account Address</label>
@@ -167,6 +171,7 @@
                     </div>
                     <button type="submit" class="btn btn-primary" id="reg">Register</button>
                   </form>
+                  
                 </div>
               </div>
             </div>
@@ -193,16 +198,18 @@
         const phone = document.querySelector('#phone').value;
         const accountAddress = document.querySelector('#account').value;
         const Privatekey = document.querySelector('#privatekey').value;
-        localStorage.setItem('accountAddress', String(accountAddress));
+        // localStorage.setItem('accountAddress', String(accountAddress));
     
         socket.emit('register', {Name, Email,phone, accountAddress, Privatekey});
 
        
         socket.on('error', (error) => {
           alert(error); 
+          location.reload(); // Reload the page on error
         });
         socket.on('error-reg', (error) => {
           alert(error.message); 
+          window.location.href = './login.html';
         });
 
       //  const url = `../public/Marketplace.html?accountAddress=${encodeURIComponent(accountAddress)}&accountPrivatekey=${encodeURIComponent(Privatekey)}`;
@@ -236,8 +243,13 @@
                   window.location.href = link.href;
                 });
               });
-            });
-        
+      });
+      const logoutBtn = document.querySelector('#logout-btn');
+      
+      logoutBtn.addEventListener('click', () => {
+          
+          window.location.href = './login.html';
+       });
       </script>
       
 </body>

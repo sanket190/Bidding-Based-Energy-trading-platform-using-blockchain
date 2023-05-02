@@ -57,45 +57,45 @@
    }
       </style>
        <nav class="navbar navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
-           <div class="container-fluid">
-             
-             <a class="navbar-brand" href="#">
-               <img src="../images/blockchain_log.png" alt="logo" width="50" height="34">
-             </a>    
-             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-               <span class="navbar-toggler-icon"></span>
-             </button>
-             <div class="collapse navbar-collapse" id="navbarSupportedContent">
-               <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                 <li class="nav-item">
-                   <a class="nav-link active" aria-current="page" href="./Marketplace.html">Home</a>
-                 </li>
-                 <li class="nav-item">
-                   <a class="nav-link active"  href="./info.html">Info</a>
-                    
-                 </li>
-                 <li class="nav-item dropdown">
-                   <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                     Wallets
-                   </a>
-                   <ul class="dropdown-menu">
-                    
-                     
-                     <li><a class="dropdown-item" href="./Energy_balance.html">Energy Wallet</a></li>
-                     <li><a class="dropdown-item" href="./wallet.html">Eth wallet</a></li>
-                   </ul>
-                 </li>
-                 <li class="nav-item">
-                   <a class="nav-link active ">Contact us</a>
-                 </li>
-               </ul>
-               <form class="d-flex" role="search">
-                 <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                 <button class="btn btn-outline-success" type="submit">Search</button>
-               </form>
-             </div>
-           </div> 
-         </nav> 
+        <div class="container-fluid">
+            
+          <a class="navbar-brand" href="#">
+            <img src="../images/blockchain_log.png" alt="logo" width="50" height="34">
+          </a>    
+          
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+            
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="./Marketplace.html">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active"  href="./info.html">Info</a>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Wallets
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="./Energy_balance.html">Energy Wallet</a></li>
+                  <li><a class="dropdown-item" href="./Eth_balance.html">Eth wallet</a></li>
+                </ul>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active ">Contact us</a>
+              </li>
+            </ul>
+              
+            <div class="d-flex">
+              <button class="btn btn-outline-secondary" id="logout-btn" type="button">Logout</button>
+            </div>
+              
+          </div>
+        </div> 
+      </nav>
       <div class="container">
         <div class="row">
           <div class="col-md-6 offset-md-3">
@@ -133,8 +133,8 @@
     const socket = io('http://localhost:3000');
     // const params = new URLSearchParams(window.location.search);
     // const accountAddress = params.get('accountAddress');
-    const accountAddress = localStorage.getItem('accountAddress');
-    console.log(accountAddress)
+    // const accountAddress = localStorage.getItem('accountAddress');
+    // console.log(accountAddress)
     socket.emit('get-offers');
     socket.on('error',(error)=>{
       alert(error);
@@ -170,34 +170,17 @@
      
       }
     });
-    
-  // fetch('http://localhost:3000/offers-list')
-  // .then(response => response.json())
-  // .then(current_offers => {
-  //   // Find the table body element
-  //   const tableBody = document.getElementById('offers-table-body');
-    
-  //   // Remove any existing rows from the table body
-  //   tableBody.innerHTML = '';
-    
-  //   // Loop through the list of offers and create a row for each offer
-  //   current_offers.forEach(offer => {
-  //     const tableRow = document.createElement('tr');
-  //     tableRow.innerHTML = `
-  //       <td>${offer.offerId}</td>
-  //       <td>${offer.seller}</td>
-  //       <td>${offer.quantity}</td>
-  //       <td>${offer.pricePerUnit}</td>
-  //       <td>${offer.duration}</td>
-  //       <td>${new Date(offer.timestamp * 1000).toLocaleString()}</td>
-  //       <td>${offer.active}</td>
-  //     `;
+    const logoutBtn = document.querySelector('#logout-btn');
       
-  //     // Add the row to the table body
-  //     tableBody.appendChild(tableRow);
-  //   });
-  // })
-  // .catch(error => console.error(error));
+      // add a click event listener to the logout button
+    logoutBtn.addEventListener('click', () => {
+          
+          window.location.href = './login.html';
+     });
+     socket.on('logout',()=>{
+        window.location.href = './login.html';
+     })
+
   </script>
 
 

@@ -14,9 +14,14 @@
 <body>
   <style>
  .navbar {
-  background-color: #222;
-  transition: background-color 0.5s ease;
-}
+     background-color: #222;
+     position: sticky;
+     position: -webkit-sticky; 
+     top: 0;
+     transition: background-color 0.5s ease;
+
+    z-index: 100;
+   }
 
 .navbar-brand {
   font-size: 2rem;
@@ -36,6 +41,123 @@
   transform: scale(1.2);
 }
 
+/* Styling for the header */
+.container h1 {
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* Styling for the card */
+.card {
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  z-index: 99;
+}
+
+/* Styling for the card title */
+.card-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+/* Styling for the card image */
+.card img {
+  width: 250px;
+  height: 80;
+  border-radius: 10px 10px 0 0;
+}
+
+/* Styling for the card body */
+.card-body {
+  padding: 1.4rem;
+}
+
+/* Styling for the card button */
+.btn-primary {
+  background-color: #1e90ff;
+  border-color: #1e90ff;
+  border-radius: 25px;
+  padding: 0.5rem 1.5rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  transition: all 0.3s ease-in-out;
+}
+
+.btn-primary:hover {
+  background-color: #fff;
+  color: #1e90ff;
+}
+
+/* Styling for the balance card */
+#energy-balance {
+  font-size: 1.0rem;
+  font-weight: bold;
+  background-color: #1e90ff;
+  color: #fff;
+  border-radius: 10px 10px 0 0;
+  padding: 1rem; 
+
+}
+
+#balance-body {
+  font-size: 1.6rem;
+  font-weight: bold;
+  margin: 1rem 0;
+}
+
+/* Styling for the container */
+.container {
+  max-width: 1800px;
+
+  overflow-y: auto;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* Styling for the row */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 -80px;
+}
+
+/* Styling for the column */
+.col-md-6, .col-md-8 {
+  flex: 0 0 50%;
+  max-width: 50%;
+  padding: 0 15px;
+}
+
+.col-md-6:first-child, .col-md-8:first-child {
+  margin-bottom: 2rem;
+}
+
+/* Styling for the offset */
+.offset-md-3, .offset-md-2 {
+  margin-left: 22%;
+}
+
+/* Styling for the align-items-center */
+.align-items-center {
+  position: relative;
+}
+
+/* Styling for the card-deck */
+.card-deck {
+  margin: 0 -15px;
+}
+
+.card-deck .card {
+  flex: 0 0 calc(50% - 30px);
+  max-width: calc(50% - 80px);
+  margin: 0px 0px 10px 30px;
+}
+
+
+
+
 @media (max-width: 768px) {
   .navbar-brand {
     font-size: 1.5rem;
@@ -45,128 +167,125 @@
     font-size: 1rem;
     margin-left: 0.5rem;
   }
-  .energy-balance {
+  #energy-balance {
     position: absolute;
     bottom: 10px;
     right: 10px;
-    font-size: 14px;
+    font-size: 7px;
     color: white;
 }
 
 }
    </style>
-    <nav class="navbar navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
-        <div class="container-fluid">
-          
-          <a class="navbar-brand" href="#">
-            <img src="../images/blockchain_log.png" alt="logo" width="50" height="34">
-          </a>    
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-              <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="./Marketplace.html">Home</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link active"  href="./info.html">Info</a>
-                 
-              </li>
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  Wallets
-                </a>
-                <ul class="dropdown-menu">
-                 
-                  
-                  <li><a class="dropdown-item" href="./Energy_balance.html">Energy Wallet</a></li>
-                  <li><a class="dropdown-item" href="./Eth_balance.html">Eth wallet</a></li>
-                </ul>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link active ">Contact us</a>
-              </li>
+   <nav class="navbar navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
+    <div class="container-fluid">
+        
+      <a class="navbar-brand" href="#">
+        <img src="../images/blockchain_log.png" alt="logo" width="50" height="34">
+      </a>    
+      
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+        
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="./Marketplace.html">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active"  href="./info.html">Info</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Wallets
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="./Energy_balance.html">Energy Wallet</a></li>
+              <li><a class="dropdown-item" href="./Eth_balance.html">Eth wallet</a></li>
             </ul>
-            <form class="d-flex" role="search">
-              <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-              <button class="btn btn-outline-success" type="submit">Search</button>
-            </form>
-          </div>
-        </div> 
-      </nav> 
-      
-      
-      <div class="container mt-3">
-        <div class="row">
-          <div class="col-md-6 offset-md-3">
-            <h1 class="text-center mb-3">Energy Market</h1>
-          </div>
-        </div>
-        <div class="d-flex align-items-center">
-          <div class="card text-black bg-light mb-3" style="position: absolute; top: 150px; right: 20px;">
-            <div class="card-header" id ="energy-balance">Available Energy Balance</div>
-            <div class="card-body" id="balance">
-              <p class="text-center mb-1" id="balance-body">0</p>
-            </div>
-          </div>
-        </div>
-        
-        
-        <div class="row">
-          <div class="col-md-8 offset-md-2">
-            <div class="card-deck">
-              <div class="card">
-                <div class="card-body">
-                  <a class="navbar-brand" href="#">
-                    <img src="../images/offers.png" alt="logo" width="200" height="170">
-                  </a>
-                  <h5 class="card-title">Check Energy Prices</h5>
-                  <a href="./offerlist.html" class="btn btn-primary">Go to Offer List</a>
-                </div>
-              </div>
-              <div class="card">
-                <div class="card-body">
-                  <a class="navbar-brand" href="">
-                    <img src="../images/bidding.jpg" alt="logo" width="200" height="170">
-                  </a>
-                  <h5 class="card-title">Placed Bids</h5>
-                  <a href="./placebit.html" class="btn btn-primary">Go to Placed Bids</a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      
-        <div class="row mt-4">
-          <div class="col-md-8 offset-md-2">
-            <div class="card-deck">
-              <div class="card">
-                <div class="card-body">
-                  <a class="navbar-brand" href="#">
-                    <img src="../images/currentbits.jpg" alt="logo" width="200" height="170">
-                  </a>
-                  <h5 class="card-title">Show Current Bids</h5>
-                  <a href="./showbids.html" class="btn btn-primary">Go to Current Bids</a>
-                </div>
-              </div>
-              <div class="card">
-                <div class="card-body">
-                  <a class="navbar-brand" href="#">
-                    <img src="../images/sell_energy.jpg" alt="logo" width="200" height="170">
-                  </a>
-                  <h5 class="card-title">Sell Energy</h5>
-                  <a href="./sell_energy.html" class="btn btn-primary">Go to Sell Energy</a>
-                </div>
-              </div>
-            </div>
-          </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active ">Contact us</a>
+          </li>
+        </ul>
           
+        <div class="d-flex">
+          <button class="btn btn-outline-secondary" id="logout-btn" type="button">Logout</button>
+        </div>
+          
+      </div>
+    </div> 
+  </nav>
+  
+      
+      
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6 offset-md-3">
+        <h1 class="text-center mb-3">Energy Market</h1>
+      </div>
+    </div>
+    <div class="d-flex align-items-center">
+      <div class="card text-black bg-light mb-3" style="position: absolute; top: 10px; right: 25px;">
+        <div class="card-header" id ="energy-balance">Available Energy Balance</div>
+        <div class="card-body" id="balance">
+          <p class="text-center mb-1" id="balance-body">0</p>
         </div>
       </div>
-      
-
-	</div>
+    </div>
+  
+    <div class="row">
+      <div class="col-md-8 offset-md-2">
+        <div class="card-deck">
+          <div class="card">
+            <div class="card-body">
+              <a class="navbar-brand" href="#">
+                <img src="../images/offers.png" alt="logo" width="100" height="170">
+              </a>
+              <h5 class="card-title">Check Energy Prices</h5>
+              <a href="./offerlist.html" class="btn btn-primary">Go to Offer List</a>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-body">
+              <a class="navbar-brand" href="">
+                <img src="../images/bidding.jpg" alt="logo" width="100" height="170">
+              </a>
+              <h5 class="card-title">Placed Bids</h5>
+              <a href="./placebit.html" class="btn btn-primary">Go to Placed Bids</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="row mt-4">
+      <div class="col-md-8 offset-md-2">
+        <div class="card-deck">
+          <div class="card">
+            <div class="card-body">
+              <a class="navbar-brand" href="#">
+                <img src="../images/currentbits.jpg" alt="logo" width="100" height="200">
+              </a>
+              <h5 class="card-title">Show Current Bids</h5>
+              <a href="./showbids.html" class="btn btn-primary">Go to Current Bids</a>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-body">
+              <a class="navbar-brand" href="#">
+                <img src="../images/sell_energy.jpg" alt="logo" width="100" height="170">
+              </a>
+              <h5 class="card-title">Sell Energy</h5>
+              <a href="./sell_energy.html" class="btn btn-primary">Go to Sell Energy</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
   
   
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
@@ -179,15 +298,10 @@
       // select the balance card element
       // const balanceCard = document.querySelector('#energy-balance');
     
-      // establish socket connection
       const socket = io('http://localhost:3000');
-      // const socket = io();
-      // const params = new URLSearchParams(window.location.search);
-      // const accountAddress = params.get('accountAddress');
-      // const accountPrivatekey = params.get('Privatekey');
-      // console.log(accountAddress,accountPrivatekey);
+    
       const accountAddress = localStorage.getItem('accountAddress');
-      console.log(accountAddress)
+      
       
       socket.emit('Energy_balance');
 
@@ -196,17 +310,18 @@
           balanceCard.querySelector('#balance-body').textContent = data.balance;
           
       });
-    
-      // // listen for 'energyBalance' event from server
-      // socket.on('energyBalance', (data) => {
-      //   // update the balance card with the available energy balance
-      //   // console.log(data);
-      //   balanceCard.querySelector('#balance-body').textContent = data.availableEnergyBalance;
-      // });
-    
-      // emit 'fetchEnergyBalance' event to server
-      // socket.emit('fetchEnergyBalance');
-    
+      const logoutBtn = document.querySelector('#logout-btn');
+      
+      // add a click event listener to the logout button
+      
+       logoutBtn.addEventListener('click', () => {
+          
+          window.location.href = './login.html';
+       });
+       socket.on('logout',()=>{
+        window.location.href = './login.html';
+       })
+          
     </script>
     
 
