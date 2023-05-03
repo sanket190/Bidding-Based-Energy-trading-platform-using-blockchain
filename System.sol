@@ -147,6 +147,8 @@ contract EnergyMarket {
                 // bids[offerId][i].status="LostBid";           
         }
         // No buyer found with the highest bid price
+        Offer storage offer = offers[offerId];
+        offer.active = false;
         revert("No buyer found with the highest bid price");
     }
   
