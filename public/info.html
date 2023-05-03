@@ -180,8 +180,7 @@
          
         </tr>
       </thead>
-      <tbody>
-       
+      <tbody id="trans">
       </tbody>
     </table>
     
@@ -209,8 +208,7 @@
         // const params = new URLSearchParams(window.location.search);
         // const accountAddress = params.get('accountAddress');
         // console.log(accountAddress)
-        const accountAddress = localStorage.getItem('accountAddress');
-        console.log(accountAddress)
+       
         
         socket.on('error', (error) => {
           alert(error.message); 
@@ -256,36 +254,28 @@
       socket.emit('getTransactionHistory');
 
       // When the server responds with the transaction history, update the table
-      socket.on('transactionHistory', function(transactions) {
-        const tableBody = document.querySelector('#transactionTable tbody');
+      socket.on('transactionHistory', async (transactions) =>{
+      const tableBody = document.querySelector('#trans');
+      console.log(transactions);
+      
 
       // Clear the existing table rows
       tableBody.innerHTML = '';
 
       // Add a new row for each transaction
-      transactions.forEach(function(transaction) {
-        const row = tableBody.insertRow();
-
-        // Add cells for the transaction date, type, sender, recipient, and amount
-        const dateCell = row.insertCell();
-        dateCell.textContent = transaction.date;
-
-        const typeCell = row.insertCell();
-        typeCell.textContent = transaction.type;
-
-        const senderCell = row.insertCell();
-        senderCell.textContent = transaction.sender;
-
-        const recipientCell = row.insertCell();
-        recipientCell.textContent = transaction.recipient;
-
-        const amountCell = row.insertCell();
-        amountCell.textContent = transaction.amount + 'ETH';
-
-        const energyCell = row.insertCell();
-        energyCell.textContent = transaction.energy;
-
-        });
+      transactions.forEach(transaction => {
+            const tableRow = document.createElement('tr');
+            tableRow.innerHTML = `
+              <td>${transaction.date}</td>
+              <td>${transaction.type}</td>
+              <td>${transaction.sender}</td>
+              <td>${transaction.recipient}</td>
+              <td> ${transaction.amount} ETH</td>
+            `;
+            
+            // Add the row to the table body
+            tableBody.appendChild(tableRow);
+          });
       });
 
 

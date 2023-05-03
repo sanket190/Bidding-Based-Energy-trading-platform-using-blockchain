@@ -153,12 +153,14 @@
       try {
           // Find the table body element
           const tableBody = document.getElementById('Bids-table-body');
-        
+
+          
         // Remove any existing rows from the table body
           tableBody.innerHTML = '';
         
         // Loop through the list of offers and create a row for each offer
           current_bids.forEach(bid => {
+            
           const tableRow = document.createElement('tr');
           tableRow.innerHTML = `
             <td>${bid.offerId}</td>

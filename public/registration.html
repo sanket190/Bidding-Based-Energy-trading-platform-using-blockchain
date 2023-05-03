@@ -38,7 +38,7 @@
     
         .container {
             padding: 30px;
-            margin-top: 40px;
+            margin-top: 0px;
             border: 2px solid #ccc;
             border-radius: 10px;
         }
@@ -48,8 +48,13 @@
         }
         
         .navbar {
-            background-color: #222;
-            transition: background-color 0.5s ease;
+          background-color: #222;
+          position: sticky;
+          position: -webkit-sticky; 
+          top: 0;
+          transition: background-color 0.5s ease;
+
+            z-index: 100;
         }
         
         .navbar-brand {

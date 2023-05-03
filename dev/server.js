@@ -18,7 +18,7 @@ app.get('/', (req, res) => {
 
 
 
-const energyMarketContractAddress = '0x78D74De1a6E4308Ec2970D1650C8E07FBd65b265'; // Replace with the actual contract address
+const energyMarketContractAddress = '0x179B03c484CEfCAFBFB349F901935eA33bA6F113'; // Replace with the actual contract address
 const contractAbi = require('./contractabi.json');
 const { off } = require('process');
 const energyMarketContract = new web3.eth.Contract(contractAbi, energyMarketContractAddress);
@@ -257,6 +257,7 @@ io.on('connection', (socket) => {
         socket.emit("logout");
       }
       else{
+       
         const quantity = data.Quantity; 
         const pricePerUnit = data.PricePerUnit; 
         const duration = data.Duration; 
@@ -277,14 +278,14 @@ io.on('connection', (socket) => {
         const receipt = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
 
        
-        // console.log(offerId,duration,durationUnit);
+        
        
         socket.emit('sellenergy', true);
        
         var duration_gap = 1000* duration * convertToSeconds(durationUnit);
         var time = duration * convertToSeconds(durationUnit)
         Initiate_auction(time, offerId);
-        console.log(time);
+       
         
         setTimeout(() => {
           endRound(offerId);      
@@ -317,12 +318,14 @@ io.on('connection', (socket) => {
 
 socket.on('getTransactionHistory', async()=>{
   try{
+    // console.log(transactions[String(accountAddress)]);
+    // console.log(transactions[accountAddress]);
     if (!accountAddress || !accountPrivateKey) {
       // Emit "logout" event
       socket.emit("logout");
     }
     else{
-      if (transactions.hasOwnProperty(accountAddress)) {
+      if (!transactions.hasOwnProperty(String(accountAddress))) {
         console.log("no transction history is exist");
       } else {
         socket.emit('transactionHistory',transactions[accountAddress]);
@@ -349,22 +352,49 @@ async function sendTransaction(senderAddress,recipientAddress,totalCost) {
   };
   const signedTransaction = await web3.eth.accounts.signTransaction(transactionObject, accountPrivateKey);
   const transactionReceipt = await web3.eth.sendSignedTransaction(signedTransaction.rawTransaction);
-  console.log('Transaction receipt:', transactionReceipt);
-  const currentDate = new Date();
-  transactions[senderAddress]={
-    date : currentDate.toLocaleDateString(),
-    type : "withdraw",
-    sender : senderAddress,
-    recipient : recipientAddress,
-    amount : totalCost
+  currentDate = new Date();
+  if (!transactions.hasOwnProperty(senderAddress)) {
+    transactions[senderAddress] = [];
+    transactions[senderAddress].push({
+      date : currentDate.toLocaleDateString(),
+      type : "withdraw",
+      sender : senderAddress,
+      recipient : recipientAddress,
+      amount : totalCost
+    });
   }
-  transactions[recipientAddress]={
-    date : currentDate.toLocaleDateString(),
-    type : "deposit",
-    sender : recipientAddress,
-    recipient : senderAddress,
-    amount : totalCost
+  else{
+    transactions[senderAddress].push({
+      date : currentDate.toLocaleDateString(),
+      type : "withdraw",
+      sender : senderAddress,
+      recipient : recipientAddress,
+      amount : totalCost
+    });
   }
+
+  if (!transactions.hasOwnProperty(recipientAddress)) {
+    transactions[recipientAddress] = [];
+    transactions[recipientAddress].push({
+      date : currentDate.toLocaleDateString(),
+      type : "deposit",
+      sender : recipientAddress,
+      recipient : senderAddress,
+      amount : totalCost
+    });
+  }
+  else{
+    transactions[recipientAddress].push({
+      date : currentDate.toLocaleDateString(),
+      type : "deposit",
+      sender : recipientAddress,
+      recipient : senderAddress,
+      amount : totalCost
+    });
+  }
+
+
+  console.log('Transaction receipt:', transactions);
   
 }
   async function endRound(offerId){
@@ -377,7 +407,7 @@ async function sendTransaction(senderAddress,recipientAddress,totalCost) {
         const OfferId = offerId;
         console.log("in endRound");
         const roundResult  = await energyMarketContract.methods.endRound(OfferId).call()
-        console.log( roundResult.winningBidder, roundResult.producerAddress, roundResult.totalCost);
+        // console.log( roundResult.winningBidder, roundResult.producerAddress, roundResult.totalCost);
         
         const gasPrice = await web3.eth.getGasPrice();
         const gasLimit = 300000;
@@ -396,7 +426,14 @@ async function sendTransaction(senderAddress,recipientAddress,totalCost) {
         await sendTransaction(roundResult.winningBidder,roundResult.producerAddress,roundResult.totalCost);
       }
     }catch (error) {
-     console.log(error); 
+      if (error.message.includes("revert")) {
+        const errorMessage = error.message.split("revert ")[1];
+        console.log(errorMessage);
+        socket.emit('error',errorMessage);
+      } else {
+        console.log(error.message);
+        socket.emit('error',error.message);
+      }
     }
   }
 
@@ -435,8 +472,14 @@ async function sendTransaction(senderAddress,recipientAddress,totalCost) {
       socket.emit('bidplaced',true)
     }
     } catch (error) {
-      console.error('Transaction failed:', error);
-      socket.emit('error','Error placing bid.');
+      if (error.message.includes("revert")) {
+        const errorMessage = error.message.split("revert ")[1];
+        console.log(errorMessage);
+        socket.emit('error',errorMessage);
+      } else {
+        console.log(error.message);
+        socket.emit('error',error.message);
+      }
     }
   });
   
