@@ -18,7 +18,7 @@ app.get('/', (req, res) => {
 
 
 
-const energyMarketContractAddress = '0x179B03c484CEfCAFBFB349F901935eA33bA6F113'; // Replace with the actual contract address
+const energyMarketContractAddress = '0x49cCA757F227f0a47eaB797566a73cC4A951e918'; // Replace with the actual contract address
 const contractAbi = require('./contractabi.json');
 const { off } = require('process');
 const energyMarketContract = new web3.eth.Contract(contractAbi, energyMarketContractAddress);
@@ -352,6 +352,7 @@ async function sendTransaction(senderAddress,recipientAddress,totalCost) {
   };
   const signedTransaction = await web3.eth.accounts.signTransaction(transactionObject, accountPrivateKey);
   const transactionReceipt = await web3.eth.sendSignedTransaction(signedTransaction.rawTransaction);
+  
   currentDate = new Date();
   if (!transactions.hasOwnProperty(senderAddress)) {
     transactions[senderAddress] = [];
@@ -394,7 +395,7 @@ async function sendTransaction(senderAddress,recipientAddress,totalCost) {
   }
 
 
-  console.log('Transaction receipt:', transactions);
+  console.log('Transaction receipt:', transactionReceipt);
   
 }
   async function endRound(offerId){
