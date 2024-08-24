@@ -18,30 +18,30 @@ Client.js: Basic web server to handle client-side requests.
 Producer.js: Backend server for energy producers to create offers and manage bids.
 Consumer.js: Backend server for energy consumers to place bids and view offers.
 
-Installation and Setup
+# Installation and Setup
 
-# Clone the Repository:
+Clone the Repository:
 git clone https://github.com/yourusername/energy-trading-platform.git
 cd energy-trading-platform
 
-# Install Dependencies: Navigate to the project directory and run:
+Install Dependencies: Navigate to the project directory and run:
  npm install
 
-# Compile the Smart Contract: Use the Solidity compiler to compile System.sol. This will generate the ABI and bytecode needed to deploy the contract.
+Compile the Smart Contract: Use the Solidity compiler to compile System.sol. This will generate the ABI and bytecode needed to deploy the contract.
  solc --optimize --bin --abi System.sol -o build/
 
-# Deploy the Smart Contract: Deploy the compiled smart contract to your local Ethereum blockchain (e.g., Ganache). You can do this using a script or through the Remix IDE. Note the contract address after deployment.
+Deploy the Smart Contract: Deploy the compiled smart contract to your local Ethereum blockchain (e.g., Ganache). You can do this using a script or through the Remix IDE. Note the contract address after deployment.
 
 # Configure the Servers:
 
 In Producer.js and Consumer.js, replace the placeholder contract address with the actual deployed contract address.
 Update the Ethereum account addresses and private keys in both files with your own.
 
-# Run the Servers: Start the servers by running:
+Run the Servers: Start the servers by running:
 node Producer.js
 node Consumer.js
-
-# Access the Platform: Open your web browser and navigate to http://localhost:3001 to interact with the platform. The server running on port 3000 is used for API requests related to the energy trading operations.
+ 
+Access the Platform: Open your web browser and navigate to http://localhost:3001 to interact with the platform. The server running on port 3000 is used for API requests related to the energy trading operations.
 
 # Usage
 Producers can create new energy offers by specifying the quantity, price per unit, and duration.
